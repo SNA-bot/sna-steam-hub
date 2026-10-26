@@ -1563,13 +1563,15 @@ const elecData = {
     anoR: '2H₂O → O₂ + 4H⁺ + 4e⁻',
     text: '<strong>Cathode (−):</strong> Cu²⁺ + 2e⁻ → Cu (copper metal deposited)<br><strong>Anode (+):</strong> 2H₂O → O₂ + 4H⁺ + 4e⁻ (oxygen gas)<br>Cu²⁺ is preferentially discharged over H⁺.'
   },
-  hcl: {
-    title: 'Dilute Hydrochloric Acid',
-    cat: 'H₂', ano: 'Cl₂',
-    catR: '2H⁺ + 2e⁻ → H₂',
-    anoR: '2Cl⁻ → Cl₂ + 2e⁻',
-    text: '<strong>Cathode (−):</strong> 2H⁺ + 2e⁻ → H₂ (hydrogen gas)<br><strong>Anode (+):</strong> 2Cl⁻ → Cl₂ + 2e⁻ (chlorine gas)<br>Both products are gases.'
+  
+hcl: {
+  title: 'Hydrochloric Acid (Aqueous)',
+  cat: 'H₂', ano: 'Cl₂ / O₂',
+  catR: '2H⁺ + 2e⁻ → H₂',
+  anoR: 'Depends on chloride concentration',
+  text: '<strong>Cathode (−):</strong> 2H⁺ + 2e⁻ → H₂ (hydrogen gas).<br><strong>Anode (+):</strong> Chloride ions can form chlorine gas: 2Cl⁻ → Cl₂ + 2e⁻. In very dilute solutions, oxidation of water may produce oxygen instead. The anode product depends on concentration and experimental conditions.'
   },
+
   water: {
     title: 'Acidified Water',
     cat: 'H₂', ano: 'O₂',
