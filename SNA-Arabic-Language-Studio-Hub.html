@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SNA Arabic Language Studio · Hub</title>
+<style>
+  :root {
+    --navy:#0b1c3d; --gold:#c9a227; --bg:#f1f5f9; --card:#fff; --line:#e2e8f0;
+    --ink:#1e293b; --muted:#64748b;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"Segoe UI","Noto Naskh Arabic","Amiri",Tahoma,sans-serif;
+    background:linear-gradient(165deg,#042f2e 0%,#0f766e 35%,#f1f5f9 35.1%);
+    color:var(--ink); min-height:100vh; line-height:1.55;
+  }
+  body.ar{direction:rtl}
+  header{
+    text-align:center; color:#ecfdf5; padding:28px 16px 18px;
+  }
+  header h1{margin:0 0 8px; font-size:1.45rem; font-weight:800}
+  header p{margin:0 auto; max-width:560px; font-size:.92rem; opacity:.95}
+  .langbar{
+    display:flex; gap:8px; justify-content:center; margin-top:14px;
+  }
+  .langbar button{
+    border:1px solid rgba(255,255,255,.35); background:rgba(255,255,255,.12);
+    color:#fff; border-radius:999px; padding:7px 14px; font-weight:700; cursor:pointer;
+  }
+  .langbar button.on{background:#c9a227; border-color:#c9a227; color:#1c1917}
+  .wrap{max-width:980px; margin:0 auto; padding:8px 14px 40px}
+  .glance{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:14px 16px; margin-bottom:16px; box-shadow:0 10px 28px rgba(15,23,42,.08);
+  }
+  .glance h2{margin:0 0 10px; font-size:1rem; color:var(--navy)}
+  .pills{display:flex; flex-wrap:wrap; gap:8px}
+  .pill{
+    font-size:.78rem; font-weight:700; padding:5px 11px; border-radius:999px;
+    background:#f1f5f9; border:1px solid var(--line); color:#475569;
+  }
+  .pill.ok{background:#dcfce7; border-color:#86efac; color:#166534}
+  .pill.warn{background:#ffedd5; border-color:#fdba74; color:#9a3412}
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px;
+  }
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:16px; text-decoration:none; color:inherit;
+    box-shadow:0 8px 24px rgba(15,23,42,.06);
+    transition: transform .15s, box-shadow .15s; display:flex; flex-direction:column; gap:8px;
+    cursor:pointer; border:none; text-align:inherit; font:inherit; width:100%;
+  }
+  .card:hover{transform:translateY(-3px); box-shadow:0 14px 32px rgba(15,23,42,.12)}
+  .card .em{font-size:1.8rem}
+  .card h3{margin:0; font-size:1.05rem; color:var(--navy)}
+  .card p{margin:0; font-size:.84rem; color:var(--muted); flex:1}
+  .card .meta{font-size:.75rem; font-weight:700; color:#0f766e}
+  .card.adv{border-color:#99f6e4; background:linear-gradient(180deg,#f0fdfa,#fff)}
+  .card.ss1{border-top:4px solid #0d9488}
+  .card.ss2{border-top:4px solid #7c3aed}
+  .card.ss3{border-top:4px solid #ea580c}
+  .stage{
+    display:none; background:#fff; border-radius:16px; border:1px solid var(--line);
+    overflow:hidden; min-height:70vh; box-shadow:0 12px 36px rgba(15,23,42,.1);
+  }
+  .stage.on{display:block}
+  .stage-bar{
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between;
+    padding:10px 12px; background:#0f172a; color:#e2e8f0;
+  }
+  .stage-bar button{
+    border:1px solid #334155; background:#1e293b; color:#f8fafc;
+    border-radius:999px; padding:7px 12px; font-weight:700; cursor:pointer; font-size:.8rem;
+  }
+  .stage-bar .title{font-weight:800; font-size:.9rem}
+  iframe{width:100%; height:calc(100vh - 120px); min-height:640px; border:0; background:#fff}
+  .home-only.on{display:block}
+  .home-only{display:none}
+  footer{text-align:center; font-size:.75rem; color:#64748b; padding:12px}
+  .ar-only{display:none} .en-only{display:none}
+  body.ar .ar-only{display:block} body.en .en-only{display:block}
+  body.ar span.ar-only, body.en span.en-only{display:inline}
+  .note{font-size:.8rem; color:var(--muted); margin-top:8px}
+</style>
+</head>
+<body class="en">
+<header>
+  <div style="display:inline-block;background:#fde68a;color:#78350f;font-size:.7rem;font-weight:800;padding:3px 10px;border-radius:999px;margin-bottom:8px">SEALED NECTAR ACADEMY</div>
+  <h1>
+    <span class="en-only">📚 Arabic Language Studio · Hub</span>
+    <span class="ar-only">📚 استوديو اللغة العربية · المركز</span>
+  </h1>
+  <p>
+    <span class="en-only">SS1 · SS2 · SS3 · Advanced grammar — one entry point for teachers and students</span>
+    <span class="ar-only">الأول · الثاني · الثالث · النحو المتقدم — مدخل واحد للمعلم والطالب</span>
+  </p>
+  <div class="langbar">
+    <button type="button" class="on" id="btnEn" onclick="setLang('en')">English</button>
+    <button type="button" id="btnAr" onclick="setLang('ar')">العربية</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="home-only on" id="homeView">
+    <div class="glance">
+      <h2>
+        <span class="en-only">Progress at a glance (this device)</span>
+        <span class="ar-only">لمحة التقدّم (على هذا الجهاز)</span>
+      </h2>
+      <div class="pills" id="glancePills"></div>
+      <p class="note">
+        <span class="en-only">Scores are stored locally by each module. Open a level to continue learning.</span>
+        <span class="ar-only">تُحفظ الدرجات محليًا في كل وحدة. افتح المستوى لمتابعة التعلم.</span>
+      </p>
+    </div>
+
+    <div class="grid">
+      <button type="button" class="card ss1" data-mod="ss1">
+        <div class="em">1️⃣</div>
+        <h3><span class="en-only">SSS 1 Complete</span><span class="ar-only">الأول الثانوي · كامل</span></h3>
+        <p><span class="en-only">Terms 1–3 · word types, demonstratives, pronouns, plurals, iḍāfa, verbs · progress + summative</span>
+        <span class="ar-only">الفصول ١–٣ · أنواع الكلمة والإشارة والضمائر والجموع والإضافة والأفعال · تقدّم وختامي</span></p>
+        <div class="meta"><span class="en-only">3 terms · summative 25Q</span><span class="ar-only">٣ فصول · ختامي ٢٥</span></div>
+      </button>
+
+      <button type="button" class="card ss2" data-mod="ss2">
+        <div class="em">2️⃣</div>
+        <h3><span class="en-only">SSS 2 Complete</span><span class="ar-only">الثاني الثانوي · كامل</span></h3>
+        <p><span class="en-only">Terms 1–3 · nominal/verbal, inna/kāna, jarr, muḍāriʿ, condition, ḥāl · progress + summative</span>
+        <span class="ar-only">الفصول ١–٣ · الاسمية والفعلية وإنّ وكان والجر والمضارع والشرط والحال · تقدّم وختامي</span></p>
+        <div class="meta"><span class="en-only">3 terms · summative 25Q</span><span class="ar-only">٣ فصول · ختامي ٢٥</span></div>
+      </button>
+
+      <button type="button" class="card ss3" data-mod="ss3">
+        <div class="em">3️⃣</div>
+        <h3><span class="en-only">SSS 3 Complete</span><span class="ar-only">الثالث الثانوي · كامل</span></h3>
+        <p><span class="en-only">Terms 1–2 · tamyīz, ʿaṭf, badal, munādā, literature themes · progress + summative</span>
+        <span class="ar-only">الفصلان ١–٢ · التمييز والعطف والبدل والمنادى والأدب · تقدّم وختامي</span></p>
+        <div class="meta"><span class="en-only">2 terms · summative 20Q</span><span class="ar-only">فصلان · ختامي ٢٠</span></div>
+      </button>
+
+      <button type="button" class="card adv" data-mod="adv">
+        <div class="em">⚡</div>
+        <h3><span class="en-only">Advanced · Iʿrāb vs Bināʾ</span><span class="ar-only">متقدم · الإعراب والبناء</span></h3>
+        <p><span class="en-only">Deep difference · muʿrab vs mabnī · examples · 15Q · unit progress</span>
+        <span class="ar-only">الفرق العميق · المعرب والمبني · أمثلة · ١٥ سؤالًا · تقدّم الوحدة</span></p>
+        <div class="meta"><span class="en-only">Advanced grammar lab</span><span class="ar-only">مختبر النحو المتقدم</span></div>
+      </button>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="stage-bar">
+      <button type="button" id="btnBack">
+        <span class="en-only">← All levels</span><span class="ar-only">كل المستويات →</span>
+      </button>
+      <span class="title" id="stageTitle">—</span>
+      <button type="button" id="btnOpenTab">
+        <span class="en-only">Open in new tab</span><span class="ar-only">فتح في تبويب</span>
+      </button>
+    </div>
+    <iframe id="frame" title="Arabic module"></iframe>
+  </div>
+</div>
+
+<footer>
+  Sealed Nectar Academy · SNA Arabic Language Studio Hub · SS1 · SS2 · SS3 · Advanced
+</footer>
+
+<script>
+(function(){
+  var lang = 'en';
+  var modules = {
+    ss1: {
+      file: 'SNA-Arabic-Studio-SSS1-Complete.html',
+      en: 'SSS 1 · Complete studio',
+      ar: 'الأول الثانوي · الاستوديو الكامل',
+      keys: ['sna_arabic_SS1_progress_v1']
+    },
+    ss2: {
+      file: 'SNA-Arabic-Studio-SSS2-Complete.html',
+      en: 'SSS 2 · Complete studio',
+      ar: 'الثاني الثانوي · الاستوديو الكامل',
+      keys: ['sna_arabic_SS2_progress_v1']
+    },
+    ss3: {
+      file: 'SNA-Arabic-Studio-SSS3-Complete.html',
+      en: 'SSS 3 · Complete studio',
+      ar: 'الثالث الثانوي · الاستوديو الكامل',
+      keys: ['sna_arabic_SS3_progress_v1']
+    },
+    adv: {
+      file: 'SNA-Arabic-Advanced-Irab-vs-Bina.html',
+      en: 'Advanced · Iʿrāb vs Bināʾ',
+      ar: 'متقدم · الإعراب والبناء',
+      keys: ['sna_arabic_irab_bina_v1']
+    }
+  };
+  var current = null;
+
+  function setLang(L){
+    lang = L;
+    document.body.className = L;
+    document.getElementById('btnEn').classList.toggle('on', L==='en');
+    document.getElementById('btnAr').classList.toggle('on', L==='ar');
+    document.documentElement.lang = L==='ar'?'ar':'en';
+    document.documentElement.dir = L==='ar'?'rtl':'ltr';
+    renderGlance();
+    if(current){
+      document.getElementById('stageTitle').textContent = modules[current][L];
+    }
+  }
+  window.setLang = setLang;
+
+  function loadJSON(key){
+    try{ return JSON.parse(localStorage.getItem(key)||'{}'); }catch(e){ return {}; }
+  }
+
+  function summarize(modId){
+    var m = modules[modId];
+    var d = loadJSON(m.keys[0]);
+    if(modId === 'adv'){
+      var q = d.quiz;
+      if(q && q.attempts) return {ok:true, text:(lang==='ar'?'أفضل ':'Best ')+q.best+'/'+q.total};
+      return {ok:false, text: lang==='ar'?'لم يبدأ':'Not started'};
+    }
+    var terms = d.terms || {};
+    var done = 0, maxT = (modId==='ss3')?2:3;
+    for(var t=1;t<=maxT;t++){ if(terms[String(t)] && terms[String(t)].attempts) done++; }
+    var sum = d.summative && d.summative.attempts;
+    var label = done+'/'+maxT+(lang==='ar'?' فصول':' terms');
+    if(sum) label += (lang==='ar'?' · ختامي':' · summative');
+    return {ok: done>0 || !!sum, text: label};
+  }
+
+  function renderGlance(){
+    var box = document.getElementById('glancePills');
+    var order = ['ss1','ss2','ss3','adv'];
+    var names = {
+      ss1:{en:'SS1',ar:'الأول'},
+      ss2:{en:'SS2',ar:'الثاني'},
+      ss3:{en:'SS3',ar:'الثالث'},
+      adv:{en:'Advanced',ar:'متقدم'}
+    };
+    box.innerHTML = order.map(function(id){
+      var s = summarize(id);
+      return '<span class="pill '+(s.ok?'ok':'warn')+'">'+names[id][lang]+': '+s.text+'</span>';
+    }).join('');
+  }
+
+  function openMod(id){
+    current = id;
+    var m = modules[id];
+    document.getElementById('homeView').classList.remove('on');
+    document.getElementById('stage').classList.add('on');
+    document.getElementById('stageTitle').textContent = m[lang];
+    document.getElementById('frame').src = m.file;
+  }
+
+  function goHome(){
+    current = null;
+    document.getElementById('stage').classList.remove('on');
+    document.getElementById('homeView').classList.add('on');
+    document.getElementById('frame').src = 'about:blank';
+    renderGlance();
+  }
+
+  document.querySelectorAll('.card[data-mod]').forEach(function(btn){
+    btn.addEventListener('click', function(){ openMod(btn.getAttribute('data-mod')); });
+  });
+  document.getElementById('btnBack').onclick = goHome;
+  document.getElementById('btnOpenTab').onclick = function(){
+    if(current) window.open(modules[current].file, '_blank');
+  };
+
+  // Expose for file protocol / same folder deploy
+  window.SNA_ARABIC_HUB = modules;
+
+  renderGlance();
+})();
+</script>
+</body>
+</html>
