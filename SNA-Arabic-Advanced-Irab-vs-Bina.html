@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SNA Arabic · Advanced · Iʿrāb vs Bināʾ</title>
+<style>
+  :root {
+    --navy:#0b1c3d; --gold:#c9a227; --bg:#f8fafc; --card:#fff; --line:#e2e8f0;
+    --ink:#1e293b; --muted:#64748b; --ok:#166534; --bad:#9f1239; --teal:#0f766e;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"Segoe UI","Noto Naskh Arabic","Amiri","Traditional Arabic",Tahoma,sans-serif;
+    background:linear-gradient(180deg,#ecfeff 0%,var(--bg) 40%);
+    color:var(--ink); line-height:1.65;
+  }
+  body.ar{direction:rtl} body.en{direction:ltr}
+  header{
+    background:linear-gradient(135deg,#042f2e,#0f766e);
+    color:#ecfdf5; padding:18px 16px 14px; text-align:center;
+    border-bottom:3px solid var(--gold);
+  }
+  header h1{margin:0 0 6px; font-size:1.2rem}
+  header p{margin:0; font-size:.88rem; opacity:.95}
+  .bar{
+    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+    padding:10px 12px; background:#fff; border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:20;
+  }
+  .bar button{
+    border:1px solid var(--line); background:#f1f5f9; color:var(--navy);
+    border-radius:999px; padding:8px 14px; font-weight:700; cursor:pointer; font-size:.82rem;
+  }
+  .bar button.on{
+    background:linear-gradient(135deg,#0f766e,#115e59); color:#fff; border-color:#0f766e;
+  }
+  .lang-btn.on{background:linear-gradient(135deg,#c9a227,#a16207); color:#fff; border-color:#a16207}
+  main{max-width:920px; margin:0 auto; padding:16px 14px 40px}
+  .panel{display:none} .panel.on{display:block}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 16px; margin-bottom:12px; box-shadow:0 6px 18px rgba(15,23,42,.05);
+  }
+  .card h2{margin:0 0 8px; font-size:1.08rem; color:var(--navy)}
+  .card h3{margin:14px 0 6px; font-size:.95rem; color:var(--teal)}
+  .badge{
+    display:inline-block; font-size:.68rem; font-weight:800;
+    padding:3px 10px; border-radius:999px; background:#ccfbf1; color:#115e59; margin-bottom:8px;
+  }
+  .goal{
+    background:#fffbeb; border:1px solid #fde68a; border-radius:10px;
+    padding:10px 12px; margin:8px 0 12px; font-size:.9rem; color:#78350f;
+  }
+  .example{
+    background:#f0fdfa; border-left:4px solid #0d9488; border-radius:8px;
+    padding:10px 12px; margin:10px 0; font-size:.9rem;
+  }
+  body.ar .example{border-left:none; border-right:4px solid #0d9488}
+  .diff-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:12px 0;
+  }
+  @media(max-width:640px){.diff-grid{grid-template-columns:1fr}}
+  .diff-card{
+    border-radius:12px; padding:12px 14px; border:1px solid var(--line);
+  }
+  .diff-card.irab{background:#ecfdf5; border-color:#99f6e4}
+  .diff-card.bina{background:#fef3c7; border-color:#fcd34d}
+  .diff-card h3{margin:0 0 8px; font-size:.95rem}
+  .diff-card.irab h3{color:#065f46}
+  .diff-card.bina h3{color:#92400e}
+  table{width:100%; border-collapse:collapse; font-size:.86rem; margin:8px 0 12px}
+  th,td{border:1px solid var(--line); padding:8px 10px; text-align:start; vertical-align:top}
+  th{background:#f1f5f9; color:var(--navy)}
+  .q{background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px}
+  .q .stem{font-weight:700; margin-bottom:8px; color:var(--navy)}
+  .opts{display:grid; gap:6px}
+  .opts button{
+    text-align:start; padding:9px 12px; border-radius:8px; border:1px solid #cbd5e1;
+    background:#f8fafc; cursor:pointer; font-size:.86rem;
+  }
+  body.ar .opts button{text-align:right}
+  .opts button.ok{border-color:#16a34a; background:#dcfce7}
+  .opts button.bad{border-color:#dc2626; background:#fee2e2}
+  .hint{font-size:.8rem; margin-top:6px; color:var(--muted); min-height:1.2em}
+  .hint.ok{color:var(--ok)} .hint.bad{color:var(--bad)}
+  .keys{background:#0f172a; color:#e2e8f0; border-radius:12px; padding:14px; font-size:.88rem}
+  .keys h3{color:#fde68a; margin-top:0}
+  .hidden-keys{display:none} .hidden-keys.show{display:block}
+  footer{text-align:center; font-size:.75rem; color:var(--muted); padding:8px 12px 24px}
+  .ar-only{display:none} .en-only{display:none}
+  body.ar .ar-only{display:block} body.en .en-only{display:block}
+  body.ar span.ar-only, body.en span.en-only{display:inline}
+  .path{
+    background:#f0fdfa; border:1px solid #99f6e4; border-radius:10px;
+    padding:8px 12px; margin-bottom:12px; font-size:.8rem; color:#115e59; text-align:center;
+  }
+  .progress-wrap{background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px; margin-top:8px}
+  .prog-pill{
+    display:inline-block; font-size:.75rem; font-weight:700; padding:4px 10px; border-radius:999px;
+    background:#f1f5f9; color:#475569; border:1px solid var(--line); margin:4px 4px 4px 0;
+  }
+  .prog-pill.done{background:#dcfce7; color:#166534; border-color:#86efac}
+  .vs{
+    text-align:center; font-weight:900; color:#0f766e; font-size:1.1rem; margin:8px 0;
+  }
+</style>
+</head>
+<body class="en">
+<header>
+  <div class="badge" style="background:#fde68a;color:#78350f">SNA ADVANCED ARABIC · GRAMMAR LAB</div>
+  <h1>
+    <span class="en-only">Iʿrāb vs Bināʾ · الإعراب والبناء</span>
+    <span class="ar-only">الإعراب والبناء · Iʿrāb vs Bināʾ</span>
+  </h1>
+  <p>
+    <span class="en-only">Advanced unit · Difference · Examples · Evaluation · Progress</span>
+    <span class="ar-only">وحدة متقدمة · الفرق · أمثلة · تقويم · تقدّم</span>
+  </p>
+</header>
+
+<div class="bar">
+  <button type="button" class="lang-btn on" id="btnEn" onclick="setLang('en')">English</button>
+  <button type="button" class="lang-btn" id="btnAr" onclick="setLang('ar')">العربية</button>
+  <button type="button" class="on" data-panel="diff"><span class="en-only">Difference</span><span class="ar-only">الفرق</span></button>
+  <button type="button" data-panel="teacher"><span class="en-only">Teacher</span><span class="ar-only">المعلم</span></button>
+  <button type="button" data-panel="student"><span class="en-only">Student</span><span class="ar-only">الطالب</span></button>
+  <button type="button" data-panel="eval"><span class="en-only">Evaluation</span><span class="ar-only">التقويم</span></button>
+  <button type="button" data-panel="keys"><span class="en-only">Keys</span><span class="ar-only">الإجابات</span></button>
+  <button type="button" data-panel="progress"><span class="en-only">Progress</span><span class="ar-only">التقدّم</span></button>
+</div>
+
+<main>
+  <!-- DIFFERENCE (featured) -->
+  <section class="panel on" id="panel-diff">
+    <div class="path">
+      <span class="en-only"><strong>Path:</strong> Difference → Teacher/Student notes → Quiz → Progress</span>
+      <span class="ar-only"><strong>المسار:</strong> الفرق → المذكرات → التقويم → التقدّم</span>
+    </div>
+    <div class="card">
+      <span class="badge"><span class="en-only">THE DIFFERENCE</span><span class="ar-only">الفرق الجوهري</span></span>
+      <h2>
+        <span class="en-only">What is the difference between iʿrāb and bināʾ?</span>
+        <span class="ar-only">ما الفرق بين الإعراب والبناء؟</span>
+      </h2>
+      <div class="goal">
+        <span class="en-only"><strong>One sentence:</strong> Iʿrāb means the ending <em>changes</em> with the word’s job; bināʾ means the ending is <em>fixed</em> and does not change with the job.</span>
+        <span class="ar-only"><strong>جملة واحدة:</strong> الإعراب تغيّر آخر الكلمة حسب موقعها، والبناء ثبات آخرها فلا يتغيّر بتغيّر الموقع.</span>
+      </div>
+
+      <div class="diff-grid">
+        <div class="diff-card irab">
+          <h3><span class="en-only">Iʿrāb · الإعراب</span><span class="ar-only">الإعراب · Iʿrāb</span></h3>
+          <ul style="margin:0;padding-inline-start:1.2em;font-size:.9rem">
+            <li><span class="en-only">Ending is <strong>variable</strong></span><span class="ar-only">آخر الكلمة <strong>متغيّر</strong></span></li>
+            <li><span class="en-only">Shows the <strong>role</strong> (فاعل، مفعول، مجرور…)</span><span class="ar-only">يدل على <strong>الموقع</strong> (فاعل، مفعول، مجرور…)</span></li>
+            <li><span class="en-only">Word is called <strong>muʿrab</strong> (معرب)</span><span class="ar-only">الكلمة <strong>معربة</strong></span></li>
+            <li><span class="en-only">Cases: رفع · نصب · جر · جزم</span><span class="ar-only">الحالات: رفع · نصب · جر · جزم</span></li>
+          </ul>
+        </div>
+        <div class="diff-card bina">
+          <h3><span class="en-only">Bināʾ · البناء</span><span class="ar-only">البناء · Bināʾ</span></h3>
+          <ul style="margin:0;padding-inline-start:1.2em;font-size:.9rem">
+            <li><span class="en-only">Ending is <strong>fixed</strong></span><span class="ar-only">آخر الكلمة <strong>ثابت</strong></span></li>
+            <li><span class="en-only">Does <strong>not</strong> cycle through ُ َ ِ for the role</span><span class="ar-only"><strong>لا</strong> تتبدّل حركته بتبدّل الموقع</span></li>
+            <li><span class="en-only">Word is called <strong>mabnī</strong> (مبني)</span><span class="ar-only">الكلمة <strong>مبنية</strong></span></li>
+            <li><span class="en-only">Role is often “in place” (في محل…)</span><span class="ar-only">الإعراب غالبًا <strong>محلي</strong> (في محل…)</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="vs">معرب ≠ مبني</div>
+
+      <h3><span class="en-only">Same root idea, different behaviour</span><span class="ar-only">فكرة واحدة وسلوكان</span></h3>
+      <table>
+        <tr>
+          <th><span class="en-only">Word</span><span class="ar-only">الكلمة</span></th>
+          <th><span class="en-only">Type</span><span class="ar-only">النوع</span></th>
+          <th><span class="en-only">What happens</span><span class="ar-only">ماذا يحدث؟</span></th>
+        </tr>
+        <tr>
+          <td>طالب</td>
+          <td><span class="en-only">Muʿrab</span><span class="ar-only">معرب</span></td>
+          <td>الطالبُ · الطالبَ · الطالبِ</td>
+        </tr>
+        <tr>
+          <td>من</td>
+          <td><span class="en-only">Mabnī</span><span class="ar-only">مبني</span></td>
+          <td><span class="en-only">Always من — never “declined” like طالب</span><span class="ar-only">تبقى «من» بلا إعراب ظاهري متغيّر</span></td>
+        </tr>
+        <tr>
+          <td>يكتب</td>
+          <td><span class="en-only">Muʿrab (muḍāriʿ)</span><span class="ar-only">معرب (مضارع)</span></td>
+          <td>يكتبُ · يكتبَ · يكتبْ</td>
+        </tr>
+        <tr>
+          <td>كتبَ</td>
+          <td><span class="en-only">Mabnī (past)</span><span class="ar-only">مبني (ماض)</span></td>
+          <td><span class="en-only">Past verb stays built; role is still “verb”</span><span class="ar-only">الماضي مبني؛ دلالته فعلية ثابتة البناء</span></td>
+        </tr>
+        <tr>
+          <td>هذا</td>
+          <td><span class="en-only">Mabnī</span><span class="ar-only">مبني</span></td>
+          <td><span class="en-only">Form fixed; analysis uses محل</span><span class="ar-only">الصيغة ثابتة والتحليل بالمحل</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2><span class="en-only">Worked contrast</span><span class="ar-only">مقارنة عاملة</span></h2>
+      <div class="example">
+        <strong>كتبَ الطالبُ في هذا الدفترِ</strong>
+        <br/><br/>
+        <span class="en-only">
+          <strong>كتبَ</strong> — mabnī past verb<br/>
+          <strong>الطالبُ</strong> — muʿrab, rafʿ (فاعل)<br/>
+          <strong>في</strong> — mabnī particle<br/>
+          <strong>هذا</strong> — mabnī demonstrative (في محل جر)<br/>
+          <strong>الدفترِ</strong> — muʿrab, jarr (بدل/نعت path as analysed; ending ِ)
+        </span>
+        <span class="ar-only">
+          <strong>كتبَ</strong> — فعل ماض مبني<br/>
+          <strong>الطالبُ</strong> — فاعل معرب مرفوع<br/>
+          <strong>في</strong> — حرف جر مبني<br/>
+          <strong>هذا</strong> — اسم إشارة مبني في محل جر<br/>
+          <strong>الدفترِ</strong> — اسم معرب مجرور
+        </span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="en-only">Quick test of understanding</span><span class="ar-only">اختبار سريع للفهم</span></h2>
+      <p><span class="en-only">Ask for every word: <strong>“If I change the job, does the ending change?”</strong></span>
+      <span class="ar-only">اسأل عن كل كلمة: <strong>إذا تغيّر موقعها، هل يتغيّر آخرها؟</strong></span></p>
+      <ul>
+        <li><span class="en-only"><strong>Yes</strong> → iʿrāb / muʿrab</span><span class="ar-only"><strong>نعم</strong> → إعراب / معرب</span></li>
+        <li><span class="en-only"><strong>No</strong> → bināʾ / mabnī</span><span class="ar-only"><strong>لا</strong> → بناء / مبني</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TEACHER -->
+  <section class="panel" id="panel-teacher">
+    <div class="card">
+      <span class="badge"><span class="en-only">FOR TEACHERS</span><span class="ar-only">للمعلمين</span></span>
+      <h2><span class="en-only">Teaching guide</span><span class="ar-only">دليل التدريس</span></h2>
+      <div class="goal">
+        <span class="en-only"><strong>Goal:</strong> Students distinguish muʿrab from mabnī, state the difference in one clear sentence, and analyse a short sentence using both “variable ending” and “fixed + محل”.</span>
+        <span class="ar-only"><strong>الهدف:</strong> أن يميّز الطالب المعرب من المبني، ويصوغ الفرق بجملة واضحة، ويحلّل جملة قصيرة بالعلامتين: التغيّر والثبات مع المحل.</span>
+      </div>
+      <h3><span class="en-only">Suggested steps</span><span class="ar-only">خطوات مقترحة</span></h3>
+      <ol>
+        <li><span class="en-only">Open with the Difference panel (two-colour cards).</span><span class="ar-only">ابدأ بلوحة الفرق (البطاقتان).</span></li>
+        <li><span class="en-only">Board: decline طالب in 3 cases; show من unchanged.</span><span class="ar-only">السبورة: إعراب «طالب» ثلاث مرات وإثبات ثبات «من».</span></li>
+        <li><span class="en-only">Sort cards: معرب / مبني (pronouns, particles, past, muḍāriʿ, nouns).</span><span class="ar-only">فرز بطاقات: معرب / مبني.</span></li>
+        <li><span class="en-only">Full line analysis of one model sentence.</span><span class="ar-only">تحليل سطر كامل لجملة نموذج.</span></li>
+        <li><span class="en-only">Quiz + record progress.</span><span class="ar-only">التقويم وتسجيل التقدّم.</span></li>
+      </ol>
+      <h3><span class="en-only">Common student errors</span><span class="ar-only">أخطاء شائعة</span></h3>
+      <ul>
+        <li><span class="en-only">Trying to put case vowels on particles (فيُ، منَ…)</span><span class="ar-only">محاولة تحريك الحروف كالأسماء</span></li>
+        <li><span class="en-only">Thinking mabnī means “no grammatical role”</span><span class="ar-only">ظنّ أن المبني بلا محل</span></li>
+        <li><span class="en-only">Forgetting muḍāriʿ is muʿrab (يكتبُ/يكتبَ/يكتبْ)</span><span class="ar-only">نسيان أن المضارع معرب</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">Lists to memorise (school set)</span><span class="ar-only">قوائم للحفظ (المستوى المدرسي)</span></h2>
+      <table>
+        <tr><th><span class="en-only">Often muʿrab</span><span class="ar-only">معرب غالبًا</span></th><th><span class="en-only">Often mabnī</span><span class="ar-only">مبني غالبًا</span></th></tr>
+        <tr>
+          <td><span class="en-only">Most nouns &amp; adjectives (طالب، كبير)</span><span class="ar-only">أكثر الأسماء والصفات</span></td>
+          <td><span class="en-only">Particles (في، لم، إنّ، يا)</span><span class="ar-only">الحروف</span></td>
+        </tr>
+        <tr>
+          <td><span class="en-only">Muḍāriʿ verb (default)</span><span class="ar-only">الفعل المضارع</span></td>
+          <td><span class="en-only">Past verb · imperative</span><span class="ar-only">الماضي · الأمر</span></td>
+        </tr>
+        <tr>
+          <td><span class="en-only">Dual &amp; sound plurals (with letter markers)</span><span class="ar-only">المثنى وجمع المذكر السالم</span></td>
+          <td><span class="en-only">Many pronouns, demonstratives, relatives</span><span class="ar-only">كثير من الضمائر والإشارات والموصولات</span></td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- STUDENT -->
+  <section class="panel" id="panel-student">
+    <div class="card">
+      <span class="badge"><span class="en-only">FOR STUDENTS</span><span class="ar-only">للطلاب</span></span>
+      <h2><span class="en-only">Study notes</span><span class="ar-only">مذكرات الدراسة</span></h2>
+      <div class="goal">
+        <span class="en-only"><strong>Remember:</strong> Iʿrāb = changing ending · Bināʾ = fixed ending.</span>
+        <span class="ar-only"><strong>تذكّر:</strong> الإعراب = تغيّر الآخر · البناء = ثبات الآخر.</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">1 · Definitions</span><span class="ar-only">١ · التعريفان</span></h2>
+      <p><strong>الإعراب:</strong>
+        <span class="en-only"> change at the end of the word because of its position in the sentence.</span>
+        <span class="ar-only"> تغيّر يحدث في آخر الكلمة بسبب موقعها في الجملة.</span>
+      </p>
+      <p><strong>البناء:</strong>
+        <span class="en-only"> the end of the word stays as it is, whatever the position.</span>
+        <span class="ar-only"> لزوم آخر الكلمة حالة واحدة لا تتغيّر بتغيّر الموقع.</span>
+      </p>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">2 · Names of the words</span><span class="ar-only">٢ · اسما الكلمة</span></h2>
+      <ul>
+        <li><span class="en-only"><strong>معرب (muʿrab):</strong> takes iʿrāb</span><span class="ar-only"><strong>معرب:</strong> يتغيّر آخره</span></li>
+        <li><span class="en-only"><strong>مبني (mabnī):</strong> has bināʾ</span><span class="ar-only"><strong>مبني:</strong> آخره ثابت</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">3 · Cases of iʿrāb</span><span class="ar-only">٣ · حالات الإعراب</span></h2>
+      <table>
+        <tr><th>رفع</th><th>نصب</th><th>جر</th><th>جزم</th></tr>
+        <tr><td>الطالبُ</td><td>الطالبَ</td><td>الطالبِ</td><td>لم يكتبْ</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">4 · Mabnī examples</span><span class="ar-only">٤ · أمثلة مبنية</span></h2>
+      <div class="example">
+        من · في · على · لم · إنّ · يا<br/>
+        هو · هي · أنا · هذا · هذه · الذي<br/>
+        كتبَ · اكتبْ
+      </div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">5 · “In place” (محل)</span><span class="ar-only">٥ · المحل</span></h2>
+      <p>
+        <span class="en-only">For mabnī words we still name the job: e.g. هذا in <em>بهذا</em> is in a genitive place (في محل جر).</span>
+        <span class="ar-only">المبني له موقع أيضًا: نحو «هذا» في «بهذا» في محل جر.</span>
+      </p>
+      <div class="example">مررتُ بهذا · (هذا: مبني في محل جر)</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">6 · Memory line</span><span class="ar-only">٦ · سطر الحفظ</span></h2>
+      <div class="example">
+        <span class="en-only"><strong>Changeable ending → iʿrāb · Fixed ending → bināʾ</strong></span>
+        <span class="ar-only"><strong>تغيّر الآخر → إعراب · ثبات الآخر → بناء</strong></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVAL -->
+  <section class="panel" id="panel-eval">
+    <div class="card">
+      <span class="badge"><span class="en-only">EVALUATION · 15 QUESTIONS</span><span class="ar-only">التقويم · ١٥ سؤالًا</span></span>
+      <h2><span class="en-only">Choose the best answer</span><span class="ar-only">اختر الإجابة الصحيحة</span></h2>
+      <p style="font-size:.85rem;color:var(--muted)">
+        <span class="en-only">Wrong answers show a hint. Retry until correct. Score is saved in Progress.</span>
+        <span class="ar-only">الخطأ يظهر تلميحًا. أعد المحاولة. تُحفظ الدرجة في التقدّم.</span>
+      </p>
+      <div id="quizBox"></div>
+      <p id="quizScore" style="font-weight:800;color:var(--teal);min-height:1.4em"></p>
+    </div>
+  </section>
+
+  <!-- KEYS -->
+  <section class="panel" id="panel-keys">
+    <div class="card">
+      <span class="badge"><span class="en-only">ANSWER KEYS</span><span class="ar-only">نماذج الإجابة</span></span>
+      <button type="button" id="toggleKeys" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+        <span class="en-only">Show / hide keys</span><span class="ar-only">إظهار / إخفاء</span>
+      </button>
+      <div class="keys hidden-keys" id="keysBox" style="margin-top:12px"><ol id="keysList"></ol></div>
+    </div>
+  </section>
+
+  <!-- PROGRESS -->
+  <section class="panel" id="panel-progress">
+    <div class="card">
+      <span class="badge"><span class="en-only">PROGRESS</span><span class="ar-only">التقدّم</span></span>
+      <h2><span class="en-only">Iʿrāb vs Bināʾ · unit progress</span><span class="ar-only">تقدّم وحدة الإعراب والبناء</span></h2>
+      <div class="progress-wrap" id="progressDashboard"></div>
+      <p style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <button type="button" id="btnExport" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+          <span class="en-only">Copy report</span><span class="ar-only">نسخ التقرير</span>
+        </button>
+        <button type="button" id="btnReset" style="border:1px solid #fecaca;background:#fef2f2;color:#991b1b;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+          <span class="en-only">Reset unit progress</span><span class="ar-only">مسح تقدّم الوحدة</span>
+        </button>
+      </p>
+      <p id="progMsg" style="font-size:.85rem;color:var(--teal);min-height:1.2em"></p>
+    </div>
+  </section>
+</main>
+
+<footer>Sealed Nectar Academy · Advanced Arabic · Iʿrāb vs Bināʾ · Dual language</footer>
+
+<script>
+(function(){
+  var lang = 'en';
+  function setLang(L){
+    lang = L;
+    document.body.className = L;
+    document.getElementById('btnEn').classList.toggle('on', L==='en');
+    document.getElementById('btnAr').classList.toggle('on', L==='ar');
+    document.documentElement.lang = L==='ar' ? 'ar' : 'en';
+    document.documentElement.dir = L==='ar' ? 'rtl' : 'ltr';
+    buildQuiz();
+    renderProgress();
+  }
+  window.setLang = setLang;
+
+  document.querySelectorAll('.bar button[data-panel]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.bar button[data-panel]').forEach(function(b){ b.classList.remove('on'); });
+      btn.classList.add('on');
+      var id = btn.getAttribute('data-panel');
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); });
+      document.getElementById('panel-'+id).classList.add('on');
+      if(id==='progress') renderProgress();
+    });
+  });
+
+  var SNA = {
+    key: 'sna_arabic_irab_bina_v1',
+    load: function(){ try{ return JSON.parse(localStorage.getItem(this.key)||'{}'); }catch(e){ return {}; } },
+    save: function(d){ try{ localStorage.setItem(this.key, JSON.stringify(d)); }catch(e){} },
+    record: function(score, total){
+      var d = this.load();
+      d.quiz = d.quiz || { best:0, attempts:0, total:total };
+      d.quiz.attempts++;
+      d.quiz.total = total;
+      if(score > (d.quiz.best||0)) d.quiz.best = score;
+      d.quiz.last = score;
+      d.quiz.updated = new Date().toISOString();
+      this.save(d);
+      renderProgress();
+    }
+  };
+
+  function renderProgress(){
+    var box = document.getElementById('progressDashboard');
+    if(!box) return;
+    var d = SNA.load();
+    var q = d.quiz;
+    var html = '';
+    if(q && q.attempts){
+      html += '<span class="prog-pill done">'+(lang==='ar'?'التقويم':'Quiz')+'</span> ';
+      html += '<span style="font-size:.9rem">'+(lang==='ar'?'أفضل درجة: ':'Best: ')+q.best+'/'+q.total+' · '+(lang==='ar'?'محاولات: ':'Attempts: ')+q.attempts+'</span>';
+    } else {
+      html += '<span class="prog-pill">'+(lang==='ar'?'التقويم':'Quiz')+'</span> ';
+      html += '<span style="font-size:.9rem;color:#94a3b8">'+(lang==='ar'?'لم يُختبر بعد':'Not attempted yet')+'</span>';
+    }
+    box.innerHTML = html;
+  }
+
+  var questions = [
+    {en:'Iʿrāb means the ending of the word…', ar:'الإعراب يعني أن آخر الكلمة…',
+     opts:{en:['stays fixed always','changes with its job in the sentence','is only for particles','never appears in Arabic'],
+           ar:['ثابت دائمًا','يتغيّر حسب موقعها في الجملة','للحروف فقط','لا يوجد في العربية']},
+     a:1, hint:{en:'Variable ending with role.', ar:'تغيّر الآخر بالموقع.'}},
+    {en:'Bināʾ means the ending of the word…', ar:'البناء يعني أن آخر الكلمة…',
+     opts:{en:['changes in every case','is fixed and does not change with the job','only exists in English','is the same as tanwīn always'],
+           ar:['يتغيّر في كل حالة','ثابت لا يتغيّر بتغيّر الموقع','في الإنجليزية فقط','هو التنوين دائمًا']},
+     a:1, hint:{en:'Fixed ending.', ar:'ثبات الآخر.'}},
+    {en:'A word that takes iʿrāb is called…', ar:'الكلمة التي يُعرب آخرها تُسمّى…',
+     opts:{en:['mabnī','muʿrab','ḥarf only','always a verb past'],
+           ar:['مبنية','معربة','حرفًا فقط','ماضيًا دائمًا']},
+     a:1, hint:{en:'Muʿrab.', ar:'معربة.'}},
+    {en:'A word with a fixed ending is called…', ar:'الكلمة ثابتة الآخر تُسمّى…',
+     opts:{en:['muʿrab','mabnī','only dual','only sound plural'],
+           ar:['معربة','مبنية','مثنى فقط','جمعًا سالمًا فقط']},
+     a:1, hint:{en:'Mabnī.', ar:'مبنية.'}},
+    {en:'Which word is typically muʿrab?', ar:'أي كلمة معربة عادة؟',
+     opts:{en:['من','في','طالب','لم'], ar:['من','في','طالب','لم']},
+     a:2, hint:{en:'Nouns like طالب decline.', ar:'طالب اسم معرب.'}},
+    {en:'Which word is typically mabnī?', ar:'أي كلمة مبنية عادة؟',
+     opts:{en:['مدرسة','كتاب','في','معلمون'], ar:['مدرسة','كتاب','في','معلمون']},
+     a:2, hint:{en:'Particles are mabnī.', ar:'الحرف مبني.'}},
+    {en:'الطالبُ / الطالبَ / الطالبِ shows…', ar:'الطالبُ / الطالبَ / الطالبِ يدل على…',
+     opts:{en:['bināʾ only','iʿrāb','that the word is a particle','that Arabic has no grammar'],
+           ar:['البناء فقط','الإعراب','أنها حرف','أن العربية بلا نحو']},
+     a:1, hint:{en:'Changing case endings.', ar:'تغيّر علامات الإعراب.'}},
+    {en:'The past verb كتبَ is generally…', ar:'الفعل الماضي كتبَ عمومًا…',
+     opts:{en:['muʿrab like muḍāriʿ','mabnī','a ḥarf jarr','a dual marker'],
+           ar:['معرب كالمضارع','مبني','حرف جر','علامة تثنية']},
+     a:1, hint:{en:'Past verbs are mabnī.', ar:'الماضي مبني.'}},
+    {en:'The muḍāriʿ يكتبُ can become يكتبَ / يكتبْ. So it is…', ar:'المضارع يكتبُ قد يصير يكتبَ / يكتبْ فهو…',
+     opts:{en:['mabnī always','muʿrab','only a pronoun','only ism tafḍīl'],
+           ar:['مبني دائمًا','معرب','ضمير فقط','اسم تفضيل فقط']},
+     a:1, hint:{en:'Muḍāriʿ is muʿrab.', ar:'المضارع معرب.'}},
+    {en:'هذا is generally…', ar:'هذا عمومًا…',
+     opts:{en:['muʿrab with tanwīn cycles','mabnī','sound masculine plural','mafʿūl muṭlaq form'],
+           ar:['معرب بالتنوين المتغيّر','مبني','جمع مذكر سالم','مفعول مطلق']},
+     a:1, hint:{en:'Demonstratives are mabnī.', ar:'اسم الإشارة مبني.'}},
+    {en:'For many mabnī words we still state the role using…', ar:'لكثير من المبني نذكر الموقع بقولنا…',
+     opts:{en:['في محل…','only deleting the word','only English translation','only skipping analysis'],
+           ar:['في محل…','حذف الكلمة فقط','الترجمة فقط','ترك التحليل']},
+     a:0, hint:{en:'Maḥall (grammatical place).', ar:'المحل.'}},
+    {en:'In مررتُ بهذا the word هذا is…', ar:'في مررتُ بهذا كلمة هذا…',
+     opts:{en:['muʿrab with kasra on a','mabnī in a genitive place','a past verb','a nawāṣib particle'],
+           ar:['معربة بكسرة على الألف','مبنية في محل جر','فعل ماض','حرف ناصب']},
+     a:1, hint:{en:'Fixed form, role in jarr place.', ar:'مبني في محل جر.'}},
+    {en:'رفع · نصب · جر · جزم are names of…', ar:'رفع · نصب · جر · جزم أسماء…',
+     opts:{en:['bināʾ types only','iʿrāb cases','only Arabic digits','only poetry metres'],
+           ar:['أنواع البناء فقط','حالات الإعراب','أرقام فقط','بحور الشعر فقط']},
+     a:1, hint:{en:'Cases of iʿrāb.', ar:'حالات الإعراب.'}},
+    {en:'Best one-line difference…', ar:'أفضل فرق في سطر…',
+     opts:{en:['Both always identical','Iʿrāb: changing ending · Bināʾ: fixed ending','Bināʾ only for nouns muʿrab only for particles','No difference in Arabic'],
+           ar:['متطابقان دائمًا','الإعراب: تغيّر الآخر · البناء: ثباته','البناء للأسماء فقط والإعراب للحروف فقط','لا فرق']},
+     a:1, hint:{en:'Change vs fixed.', ar:'تغيّر مقابل ثبات.'}},
+    {en:'Trying to decline من like منُ / منَ / منِ is…', ar:'محاولة إعراب «من» كمنُ منَ منِ…',
+     opts:{en:['correct advanced iʿrāb','a common error because من is mabnī','required for all particles','the only way to show jarr'],
+           ar:['إعراب متقدم صحيح','خطأ شائع لأن «من» مبنية','واجب على كل حرف','الطريقة الوحيدة للجر']},
+     a:1, hint:{en:'Particles are not declined like nouns.', ar:'الحرف لا يُعرب كالاسم.'}}
+  ];
+
+  function buildQuiz(){
+    var box = document.getElementById('quizBox');
+    if(!box) return;
+    var html = '';
+    questions.forEach(function(q, qi){
+      html += '<div class="q" data-qi="'+qi+'"><div class="stem">'+(qi+1)+'. '+(lang==='ar'?q.ar:q.en)+'</div><div class="opts">';
+      (lang==='ar'?q.opts.ar:q.opts.en).forEach(function(op, oi){
+        html += '<button type="button" data-oi="'+oi+'">'+op+'</button>';
+      });
+      html += '</div><div class="hint"></div></div>';
+    });
+    box.innerHTML = html;
+    document.getElementById('quizScore').textContent = '';
+    box.querySelectorAll('.q').forEach(function(wrap){
+      var qi = +wrap.getAttribute('data-qi');
+      var hint = wrap.querySelector('.hint');
+      wrap.querySelectorAll('button').forEach(function(btn){
+        btn.onclick = function(){
+          wrap.querySelectorAll('button').forEach(function(b){ b.classList.remove('ok','bad'); });
+          var oi = +btn.getAttribute('data-oi');
+          if(oi === questions[qi].a){
+            btn.classList.add('ok');
+            hint.className = 'hint ok';
+            hint.textContent = lang==='ar' ? '✓ إجابة صحيحة' : '✓ Correct';
+            wrap.querySelectorAll('button').forEach(function(b){ b.disabled = true; });
+          } else {
+            btn.classList.add('bad');
+            hint.className = 'hint bad';
+            hint.textContent = '✗ ' + (lang==='ar'?questions[qi].hint.ar:questions[qi].hint.en);
+          }
+          var n = 0;
+          box.querySelectorAll('.q').forEach(function(w){ if(w.querySelector('button.ok')) n++; });
+          document.getElementById('quizScore').textContent = (lang==='ar'?'النتيجة: ':'Score: ') + n + ' / ' + questions.length;
+          SNA.record(n, questions.length);
+        };
+      });
+    });
+    var kl = document.getElementById('keysList');
+    if(kl){
+      kl.innerHTML = questions.map(function(q,i){
+        return '<li><strong>'+(i+1)+'.</strong> '+(lang==='ar'?q.opts.ar:q.opts.en)[q.a]+'</li>';
+      }).join('');
+    }
+  }
+
+  document.getElementById('toggleKeys').onclick = function(){
+    document.getElementById('keysBox').classList.toggle('show');
+  };
+  document.getElementById('btnExport').onclick = function(){
+    var d = SNA.load(); var q = d.quiz;
+    var lines = ['SNA Arabic · Iʿrāb vs Bināʾ', new Date().toLocaleString()];
+    lines.push(q ? ('Quiz best '+q.best+'/'+q.total+' attempts '+q.attempts) : 'Quiz not attempted');
+    var t = lines.join('\n');
+    if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){
+      document.getElementById('progMsg').textContent = lang==='ar'?'تم النسخ':'Copied';
+    });
+    else document.getElementById('progMsg').textContent = t;
+  };
+  document.getElementById('btnReset').onclick = function(){
+    if(confirm(lang==='ar'?'مسح تقدّم هذه الوحدة؟':'Reset this unit progress?')){
+      localStorage.removeItem(SNA.key);
+      renderProgress();
+      document.getElementById('progMsg').textContent = lang==='ar'?'تم':'Cleared';
+    }
+  };
+
+  buildQuiz();
+  renderProgress();
+})();
+</script>
+</body>
+</html>
