@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SNA Arabic Studio · SSS 2 · معلم / طالب</title>
+<style>
+  :root {
+    --navy: #0b1c3d; --gold: #c9a227; --teal: #0f766e; --bg: #f8fafc;
+    --card: #ffffff; --line: #e2e8f0; --ink: #1e293b; --muted: #64748b;
+    --ok: #166534; --bad: #9f1239;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", "Noto Naskh Arabic", "Amiri", "Traditional Arabic", Tahoma, sans-serif;
+    background: linear-gradient(180deg, #f5f3ff 0%, var(--bg) 40%);
+    color: var(--ink); line-height: 1.65;
+  }
+  body.ar { direction: rtl; } body.en { direction: ltr; }
+  header {
+    background: linear-gradient(135deg, #1e1b4b, #5b21b6);
+    color: #f5f3ff; padding: 18px 16px 14px; text-align: center;
+    border-bottom: 3px solid var(--gold);
+  }
+  header h1 { margin: 0 0 6px; font-size: 1.2rem; }
+  header p { margin: 0; font-size: .86rem; opacity: .92; }
+  .bar {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    padding: 10px 12px; background: #fff; border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 20;
+  }
+  .bar button {
+    border: 1px solid var(--line); background: #f1f5f9; color: var(--navy);
+    border-radius: 999px; padding: 7px 12px; font-weight: 700; cursor: pointer; font-size: .8rem;
+  }
+  .bar button.on { background: linear-gradient(135deg, #5b21b6, #4c1d95); color: #fff; border-color: #4c1d95; }
+  .lang-btn.on { background: linear-gradient(135deg, #c9a227, #a16207); color: #fff; border-color: #a16207; }
+  .term-btn.on { background: linear-gradient(135deg, #0f766e, #115e59); color: #fff; border-color: #115e59; }
+  main { max-width: 940px; margin: 0 auto; padding: 16px 14px 40px; }
+  .panel { display: none; } .panel.on { display: block; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 6px 18px rgba(15,23,42,.05);
+  }
+  .card h2 { margin: 0 0 8px; font-size: 1.05rem; color: var(--navy); }
+  .card h3 { margin: 14px 0 6px; font-size: .95rem; color: #5b21b6; }
+  .badge {
+    display: inline-block; font-size: .68rem; font-weight: 800;
+    padding: 3px 10px; border-radius: 999px; background: #ede9fe; color: #5b21b6; margin-bottom: 8px;
+  }
+  .goal {
+    background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px;
+    padding: 10px 12px; margin: 8px 0 12px; font-size: .9rem; color: #78350f;
+  }
+  .example {
+    background: #f5f3ff; border-left: 4px solid #7c3aed; border-radius: 8px;
+    padding: 10px 12px; margin: 10px 0; font-size: .9rem;
+  }
+  body.ar .example { border-left: none; border-right: 4px solid #7c3aed; }
+  table { width: 100%; border-collapse: collapse; font-size: .86rem; margin: 8px 0 12px; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: start; vertical-align: top; }
+  th { background: #f5f3ff; color: var(--navy); }
+  .q { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+  .q .stem { font-weight: 700; margin-bottom: 8px; color: var(--navy); }
+  .opts { display: grid; gap: 6px; }
+  .opts button {
+    text-align: start; padding: 9px 12px; border-radius: 8px; border: 1px solid #cbd5e1;
+    background: #f8fafc; cursor: pointer; font-size: .86rem;
+  }
+  body.ar .opts button { text-align: right; }
+  .opts button.ok { border-color: #16a34a; background: #dcfce7; }
+  .opts button.bad { border-color: #dc2626; background: #fee2e2; }
+  .hint { font-size: .8rem; margin-top: 6px; color: var(--muted); min-height: 1.2em; }
+  .hint.ok { color: var(--ok); } .hint.bad { color: var(--bad); }
+  .keys { background: #0f172a; color: #e2e8f0; border-radius: 12px; padding: 14px; font-size: .88rem; }
+  .keys h3 { color: #fde68a; margin-top: 0; }
+  .hidden-keys { display: none; } .hidden-keys.show { display: block; }
+  footer { text-align: center; font-size: .75rem; color: var(--muted); padding: 8px 12px 24px; }
+  .ar-only { display: none; } .en-only { display: none; }
+  body.ar .ar-only { display: block; } body.en .en-only { display: block; }
+  body.ar span.ar-only, body.en span.en-only { display: inline; }
+  .progress-wrap {
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    padding: 12px 14px; margin-bottom: 14px;
+  }
+  .prog-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; align-items: center; }
+  .prog-pill {
+    font-size: .75rem; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+    background: #f1f5f9; color: #475569; border: 1px solid var(--line);
+  }
+  .prog-pill.done { background: #dcfce7; color: #166534; border-color: #86efac; }
+  .prog-bar-bg { height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden; flex: 1; min-width: 120px; }
+  .prog-bar-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #5b21b6); width: 0%; }
+  .summ-banner {
+    background: linear-gradient(135deg, #0f172a, #5b21b6); color: #f5f3ff;
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
+  }
+  .soon { opacity: .85; font-size: .9rem; color: var(--muted); }
+</style>
+</head>
+<body class="en">
+<header>
+  <div class="badge" style="background:#fde68a;color:#78350f">SNA LANGUAGE STUDIO · ARABIC · SS2</div>
+  <h1>
+    <span class="en-only">SSS 2 · Arabic Studio</span>
+    <span class="ar-only">الثاني الثانوي · استوديو العربية</span>
+  </h1>
+  <p>
+    <span class="en-only">Teacher · Student · Evaluation · Progress · Summative exam</span>
+    <span class="ar-only">معلم · طالب · تقويم · تقدّم · امتحان ختامي</span>
+  </p>
+</header>
+
+<div class="bar">
+  <button type="button" class="lang-btn on" id="btnEn" onclick="setLang('en')">English</button>
+  <button type="button" class="lang-btn" id="btnAr" onclick="setLang('ar')">العربية</button>
+  <button type="button" class="term-btn on" data-term="1">
+    <span class="en-only">1st Term</span><span class="ar-only">الفصل ١</span>
+  </button>
+  <button type="button" class="term-btn" data-term="2">
+    <span class="en-only">2nd Term</span><span class="ar-only">الفصل ٢</span>
+  </button>
+  <button type="button" class="term-btn" data-term="3">
+    <span class="en-only">3rd Term</span><span class="ar-only">الفصل ٣</span>
+  </button>
+  <button type="button" class="on" data-panel="teacher"><span class="en-only">Teacher</span><span class="ar-only">المعلم</span></button>
+  <button type="button" data-panel="student"><span class="en-only">Student</span><span class="ar-only">الطالب</span></button>
+  <button type="button" data-panel="eval"><span class="en-only">Evaluation</span><span class="ar-only">التقويم</span></button>
+  <button type="button" data-panel="keys"><span class="en-only">Keys</span><span class="ar-only">الإجابات</span></button>
+  <button type="button" data-panel="progress"><span class="en-only">Progress</span><span class="ar-only">التقدّم</span></button>
+  <button type="button" data-panel="summative" style="background:#5b21b6;color:#fff;border-color:#4c1d95">
+    <span class="en-only">Summative</span><span class="ar-only">ختامي</span>
+  </button>
+</div>
+
+<main>
+  <!-- TEACHER T1 -->
+  <section class="panel on" id="panel-teacher-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">TEACHERS · SS2 TERM 1</span><span class="ar-only">المعلمون · الثاني · الفصل ١</span></span>
+      <h2><span class="en-only">Teaching guide · First Term</span><span class="ar-only">دليل التدريس · الفصل الأول</span></h2>
+      <div class="goal">
+        <span class="en-only"><strong>Goal:</strong> Distinguish nominal and verbal sentences; use إنّ/كان and sisters; identify fāʿil, nāʾib fāʿil, mafʿūl bihi, naʿt; introduce khuṭbah and the Prophet’s Fatḥ Makkah sermon.</span>
+        <span class="ar-only"><strong>الهدف:</strong> تمييز الاسمية والفعلية؛ إنّ وكان وأخواتهما؛ الفاعل ونائب الفاعل والمفعول والنعت؛ مقدمة الخطبة وخطبة فتح مكة.</span>
+      </div>
+      <h3><span class="en-only">10-lesson sequence</span><span class="ar-only">تسلسل ١٠ دروس</span></h3>
+      <ol>
+        <li><span class="en-only">Nominal &amp; verbal sentences</span><span class="ar-only">الجملة الاسمية والفعلية</span></li>
+        <li><span class="en-only">Inna and its sisters</span><span class="ar-only">إنّ وأخواتها</span></li>
+        <li><span class="en-only">Kāna and its sisters</span><span class="ar-only">كان وأخواتها</span></li>
+        <li><span class="en-only">The doer (الفاعل)</span><span class="ar-only">الفاعل</span></li>
+        <li><span class="en-only">Deputy doer (نائب الفاعل)</span><span class="ar-only">نائب الفاعل</span></li>
+        <li><span class="en-only">Nominatives overview (المرفوعات)</span><span class="ar-only">المرفوعات</span></li>
+        <li><span class="en-only">Direct object (المفعول به)</span><span class="ar-only">المفعول به</span></li>
+        <li><span class="en-only">Adjective &amp; noun described (النعت والمنعوت)</span><span class="ar-only">النعت والمنعوت</span></li>
+        <li><span class="en-only">The sermon (الخطبة): definition, aims, arts</span><span class="ar-only">الخطبة: تعريفها وأغراضها وفنونها</span></li>
+        <li><span class="en-only">The Prophet’s sermon at the Conquest of Makkah</span><span class="ar-only">خطبة النبي ﷺ في فتح مكة</span></li>
+      </ol>
+      <h3><span class="en-only">Methods</span><span class="ar-only">أساليب</span></h3>
+      <ul>
+        <li><span class="en-only">Colour-code mubtadaʾ/khabar vs fiʿl/fāʿil on the board daily.</span><span class="ar-only">تلوين المبتدأ والخبر والفعل والفاعل يوميًا.</span></li>
+        <li><span class="en-only">Minimal pairs: active vs passive (كتبَ / كُتِبَ).</span><span class="ar-only">مقارنة المبني للمعلوم والمجهول.</span></li>
+        <li><span class="en-only">Sermon: values first (mercy, unity), then structure.</span><span class="ar-only">الخطبة: القيم أولًا ثم البناء.</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">1 · Nominal vs verbal</span><span class="ar-only">١ · الاسمية والفعلية</span></h2>
+      <table>
+        <tr><th><span class="en-only">Type</span><span class="ar-only">النوع</span></th><th><span class="en-only">Starts with</span><span class="ar-only">تبدأ بـ</span></th><th><span class="en-only">Core parts</span><span class="ar-only">الأركان</span></th><th><span class="en-only">Example</span><span class="ar-only">مثال</span></th></tr>
+        <tr><td><span class="en-only">Nominal</span><span class="ar-only">اسمية</span></td><td><span class="en-only">Noun</span><span class="ar-only">اسم</span></td><td>مبتدأ + خبر</td><td>الطالبُ مجتهدٌ</td></tr>
+        <tr><td><span class="en-only">Verbal</span><span class="ar-only">فعلية</span></td><td><span class="en-only">Verb</span><span class="ar-only">فعل</span></td><td>فعل + فاعل</td><td>كتبَ الطالبُ</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">2–3 · Inna &amp; Kāna and sisters</span><span class="ar-only">٢–٣ · إنّ وكان وأخواتهما</span></h2>
+      <p><span class="en-only"><strong>إنّ وأخواتها</strong> (e.g. إنّ، أنّ، كأنّ، لكنّ، ليت، لعل) — enter on nominal sentence: ism manṣūb, khabar marfūʿ.</span>
+      <span class="ar-only"><strong>إنّ وأخواتها:</strong> تنصب الاسم وترفع الخبر.</span></p>
+      <div class="example">إنّ الطالبَ مجتهدٌ</div>
+      <p><span class="en-only"><strong>كان وأخواتها</strong> (كان، أصبح، ظلّ، صار، ليس…) — ism marfūʿ, khabar manṣūb.</span>
+      <span class="ar-only"><strong>كان وأخواتها:</strong> ترفع الاسم وتنصب الخبر.</span></p>
+      <div class="example">كان الطالبُ مجتهدًا · ليس الجوُّ باردًا</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">4–7 · Fāʿil, nāʾib, objects, nominatives</span><span class="ar-only">٤–٧ · الفاعل ونائبه والمفعول والمرفوعات</span></h2>
+      <table>
+        <tr><th><span class="en-only">Term</span><span class="ar-only">المصطلح</span></th><th><span class="en-only">Role</span><span class="ar-only">الدور</span></th><th><span class="en-only">Case</span><span class="ar-only">الإعراب</span></th><th><span class="en-only">Example</span><span class="ar-only">مثال</span></th></tr>
+        <tr><td>الفاعل</td><td><span class="en-only">Doer of active verb</span><span class="ar-only">من فعل الفعل</span></td><td>رفع</td><td>كتبَ <strong>الطالبُ</strong></td></tr>
+        <tr><td>نائب الفاعل</td><td><span class="en-only">Takes place of doer in passive</span><span class="ar-only">يسد مسد الفاعل في المجهول</span></td><td>رفع</td><td>كُتِبَ <strong>الدرسُ</strong></td></tr>
+        <tr><td>المفعول به</td><td><span class="en-only">Direct object</span><span class="ar-only">ما وقع عليه الفعل</span></td><td>نصب</td><td>كتبَ الطالبُ <strong>الدرسَ</strong></td></tr>
+      </table>
+      <p><span class="en-only"><strong>المرفوعات:</strong> include mubtadaʾ, khabar, fāʿil, nāʾib fāʿil, ism kāna, khabar inna…</span>
+      <span class="ar-only"><strong>المرفوعات:</strong> المبتدأ والخبر والفاعل ونائبه واسم كان وخبر إنّ…</span></p>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">8 · Naʿt &amp; manʿūt</span><span class="ar-only">٨ · النعت والمنعوت</span></h2>
+      <p><span class="en-only">The adjective follows the noun in gender, number, definiteness, and case.</span>
+      <span class="ar-only">يتبع النعت المنعوت في النوع والعدد والتعريف/التنكير والإعراب.</span></p>
+      <div class="example">جاء الطالبُ المجتهدُ · رأيتُ طالبًا مجتهدًا</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">9–10 · Khuṭbah</span><span class="ar-only">٩–١٠ · الخطبة</span></h2>
+      <p><span class="en-only"><strong>Definition:</strong> oral address to persuade or teach. <strong>Aims:</strong> guidance, unity, moral reform. <strong>Arts:</strong> clear opening, evidence, emotional appeal, strong close.</span>
+      <span class="ar-only"><strong>التعريف:</strong> خطاب شفهي للإقناع أو التعليم. <strong>الأغراض:</strong> الهداية والوحدة والإصلاح. <strong>الفنون:</strong> مقدمة واضحة وحجج وخاتمة قوية.</span></p>
+      <p><span class="en-only"><strong>Fatḥ Makkah sermon:</strong> stress mercy, equality, and leaving revenge — link to school values.</span>
+      <span class="ar-only"><strong>خطبة فتح مكة:</strong> الرحمة والمساواة وترك الثأر — ربطها بقيم المدرسة.</span></p>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-teacher-2">
+    <div class="card">
+      <span class="badge"><span class="en-only">TEACHERS · SS2 TERM 2</span><span class="ar-only">المعلمون · الثاني · الفصل ٢</span></span>
+      <h2><span class="en-only">Teaching guide · Second Term</span><span class="ar-only">دليل التدريس · الفصل الثاني</span></h2>
+      <div class="goal">
+        <span class="en-only"><strong>Goal:</strong> Master the three types of jarr and ḥurūf al-jarr; use jawāzim and nawāṣib of the muḍāriʿ; classify ṣaḥīḥ and muʿtall verbs; study set sermons/poetry and the text «لماذا يكرهوننا».</span>
+        <span class="ar-only"><strong>الهدف:</strong> إتقان أنواع الجر وحروفه؛ جوازم المضارع ونواصبه؛ الصحيح والمعتل؛ الخطبة والشعر والنص المقرر.</span>
+      </div>
+      <h3><span class="en-only">10-lesson sequence</span><span class="ar-only">تسلسل ١٠ دروس</span></h3>
+      <ol>
+        <li><span class="en-only">Jarr: three types &amp; prepositions</span><span class="ar-only">الجر وأنواعه الثلاثة وحروف الجر</span></li>
+        <li><span class="en-only">Muḍāriʿ and its jawāzim</span><span class="ar-only">المضارع وجوازمه</span></li>
+        <li><span class="en-only">Nawāṣib of the muḍāriʿ</span><span class="ar-only">نواصب المضارع</span></li>
+        <li><span class="en-only">Sermon of Imām ʿAlī on jihād</span><span class="ar-only">خطبة الإمام علي في الجهاد</span></li>
+        <li><span class="en-only">Verb: ṣaḥīḥ vs muʿtall (1)</span><span class="ar-only">الفعل الصحيح والمعتل (١)</span></li>
+        <li><span class="en-only">Ṣaḥīḥ and muʿtall (2)</span><span class="ar-only">الصحيح والمعتل (٢)</span></li>
+        <li><span class="en-only">Farazdaq’s praise of Zayn al-ʿĀbidīn (5 lines)</span><span class="ar-only">مدائح الفرزدق لزين العابدين</span></li>
+        <li><span class="en-only">Ism al-fiʿl and its sign</span><span class="ar-only">اسم الفعل وعلامته</span></li>
+        <li><span class="en-only">Transitive &amp; intransitive verbs</span><span class="ar-only">الفعل المتعدي واللازم</span></li>
+        <li><span class="en-only">Text: «لماذا يكرهوننا» (Muḥammad Thālith Muḥyī Angwa)</span><span class="ar-only">لماذا يكرهوننا لمحمد ثالث محي أنغوا</span></li>
+      </ol>
+      <h3><span class="en-only">Methods</span><span class="ar-only">أساليب</span></h3>
+      <ul>
+        <li><span class="en-only">Jarr wall: list من، إلى، في، على، عن، ب، ل… with one example each.</span><span class="ar-only">لوحة حروف الجر مع مثال لكل حرف.</span></li>
+        <li><span class="en-only">Muḍāriʿ traffic lights: green (rafʿ) / yellow (naṣb) / red (jazm).</span><span class="ar-only">إشارات المضارع: رفع / نصب / جزم.</span></li>
+        <li><span class="en-only">Verb clinic: mark weak letters (و ا ي) in muʿtall verbs.</span><span class="ar-only">عيادة الفعل: تمييز حروف العلة.</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">1 · Jarr (genitive)</span><span class="ar-only">١ · الجر</span></h2>
+      <p><span class="en-only"><strong>Three common paths to jarr:</strong> (1) after a preposition (2) as mudāf ilayh (3) as dependent follower (e.g. naʿt of a majrūr).</span>
+      <span class="ar-only"><strong>طرق الجر الشائعة:</strong> بحرف الجر · بالإضافة · بالتبعية (نعت مجرور مثلًا).</span></p>
+      <table>
+        <tr><th><span class="en-only">Preposition</span><span class="ar-only">الحرف</span></th><th><span class="en-only">Example</span><span class="ar-only">مثال</span></th></tr>
+        <tr><td>من · إلى · في · على · عن</td><td>خرجتُ من البيتِ إلى المدرسةِ</td></tr>
+        <tr><td>بـ · لـ · كـ</td><td>كتبتُ بالقلمِ · الحمدُ للهِ</td></tr>
+      </table>
+      <div class="example">الكتابُ في الحقيبةِ · بابُ الصفِّ · مررتُ بالطالبِ المجتهدِ</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">2–3 · Muḍāriʿ: jawāzim &amp; nawāṣib</span><span class="ar-only">٢–٣ · جوازم المضارع ونواصبه</span></h2>
+      <table>
+        <tr><th><span class="en-only">Case</span><span class="ar-only">الحالة</span></th><th><span class="en-only">Particles (examples)</span><span class="ar-only">أدوات</span></th><th><span class="en-only">Effect</span><span class="ar-only">الأثر</span></th></tr>
+        <tr><td>جزم</td><td>لم · لما · لام الأمر · لا الناهية</td><td>لم يكتبْ</td></tr>
+        <tr><td>نصب</td><td>أن · لن · كي · حتى · لام التعليل</td><td>لن يكتبَ · كي ينجحَ</td></tr>
+        <tr><td>رفع (default)</td><td>—</td><td>يكتبُ</td></tr>
+      </table>
+      <div class="example">لم يذهبْ · لا تلعبْ · لن أهملَ · أريد أن أتعلمَ</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">5–6 · Ṣaḥīḥ &amp; muʿtall verbs</span><span class="ar-only">٥–٦ · الصحيح والمعتل</span></h2>
+      <table>
+        <tr><th><span class="en-only">Kind</span><span class="ar-only">النوع</span></th><th><span class="en-only">Idea</span><span class="ar-only">الفكرة</span></th><th><span class="en-only">Example</span><span class="ar-only">مثال</span></th></tr>
+        <tr><td>صحيح</td><td><span class="en-only">No weak letter (و ا ي) as radical in the usual school sense</span><span class="ar-only">سالمت أصوله من حروف العلة</span></td><td>كتب · جلس · فتح</td></tr>
+        <tr><td>معتل مثال</td><td><span class="en-only">Weak first radical</span><span class="ar-only">أولّه علة</span></td><td>وعد · وصل</td></tr>
+        <tr><td>معتل أجوف</td><td><span class="en-only">Weak middle</span><span class="ar-only">وسطه علة</span></td><td>قال · باع</td></tr>
+        <tr><td>معتل ناقص</td><td><span class="en-only">Weak last</span><span class="ar-only">آخره علة</span></td><td>رمى · دعا</td></tr>
+      </table>
+      <p><span class="en-only"><strong>Note:</strong> Also teach سالم / مهموز / مضعف under ṣaḥīḥ as in the scheme depth.</span>
+      <span class="ar-only"><strong>ملاحظة:</strong> يُدرَّس السالم والمهموز والمضعف ضمن الصحيح حسب المقرر.</span></p>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">8–9 · Ism al-fiʿl · transitive / intransitive</span><span class="ar-only">٨–٩ · اسم الفعل · المتعدي واللازم</span></h2>
+      <p><span class="en-only"><strong>اسم الفعل:</strong> a word that works like a verb in meaning and government but is not conjugated like one (e.g. آمين، هيهات، صهْ).</span>
+      <span class="ar-only"><strong>اسم الفعل:</strong> يعمل عمل الفعل دون أن يتصرف تصريفه (نحو: آمين، هيهات، صهْ).</span></p>
+      <p><span class="en-only"><strong>متعدٍّ:</strong> takes an object (كتبَ الدرسَ). <strong>لازم:</strong> does not (جلسَ).</span>
+      <span class="ar-only"><strong>المتعدي</strong> ينصب مفعولًا · <strong>اللازم</strong> يكتفي بفاعله.</span></p>
+      <div class="example">كتبَ الطالبُ الواجبَ (متعدٍ) · نامَ الطفلُ (لازم)</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">4 · 7 · 10 · Literature &amp; text</span><span class="ar-only">٤ · ٧ · ١٠ · الأدب والنص</span></h2>
+      <p><span class="en-only"><strong>Imām ʿAlī sermon:</strong> courage, sincerity, discipline — values before grammar extraction.</span>
+      <span class="ar-only"><strong>خطبة الإمام علي:</strong> الشجاعة والإخلاص والانضباط.</span></p>
+      <p><span class="en-only"><strong>Farazdaq:</strong> five set lines — dignity of Zayn al-ʿĀbidīn; focus on vocabulary of honour.</span>
+      <span class="ar-only"><strong>الفرزدق:</strong> خمسة أبيات في مدح زين العابدين.</span></p>
+      <p><span class="en-only"><strong>«لماذا يكرهوننا»:</strong> guided reading, main idea, short response paragraph.</span>
+      <span class="ar-only"><strong>لماذا يكرهوننا:</strong> قراءة موجّهة وفكرة رئيسة وفقرة تعبير.</span></p>
+    </div>
+  </section>
+  <section class="panel" id="panel-teacher-3">
+    <div class="card">
+      <span class="badge"><span class="en-only">TEACHERS · SS2 TERM 3</span><span class="ar-only">المعلمون · الثاني · الفصل ٣</span></span>
+      <h2><span class="en-only">Teaching guide · Third Term</span><span class="ar-only">دليل التدريس · الفصل الثالث</span></h2>
+      <div class="goal">
+        <span class="en-only"><strong>Goal:</strong> Build conditional sentences; form maṣdar, mafʿūl muṭlaq, ism zaman/makān; use numbers and ḥāl; study set elegy and poetry; then sit the SS2 summative exam.</span>
+        <span class="ar-only"><strong>الهدف:</strong> الجملة الشرطية؛ المصدر والمفعول المطلق واسما الزمان والمكان؛ العدد والحال؛ المرثية والشعر؛ ثم الامتحان الختامي.</span>
+      </div>
+      <h3><span class="en-only">10-lesson sequence</span><span class="ar-only">تسلسل ١٠ دروس</span></h3>
+      <ol>
+        <li><span class="en-only">Conditional sentence (الجملة الشرطية)</span><span class="ar-only">الجملة الشرطية</span></li>
+        <li><span class="en-only">Jazm marks in condition &amp; answer</span><span class="ar-only">علامات الجزم في الشرط والجواب</span></li>
+        <li><span class="en-only">The verbal noun (المصدر)</span><span class="ar-only">المصدر</span></li>
+        <li><span class="en-only">Absolute object (المفعول المطلق)</span><span class="ar-only">المفعول المطلق</span></li>
+        <li><span class="en-only">Nouns of time &amp; place</span><span class="ar-only">اسم الزمان والمكان</span></li>
+        <li><span class="en-only">Numbers (العدد)</span><span class="ar-only">العدد</span></li>
+        <li><span class="en-only">Ḥāl (الحال)</span><span class="ar-only">الحال</span></li>
+        <li><span class="en-only">Al-Khansāʾ’s elegy for Ṣakhr (5 lines)</span><span class="ar-only">مرثية الخنساء لصخر</span></li>
+        <li><span class="en-only">Elative / comparative (اسم التفضيل)</span><span class="ar-only">اسم التفضيل</span></li>
+        <li><span class="en-only">Poetry of al-Qāḍī ʿUmar Ibrāhīm (3 lines)</span><span class="ar-only">شعر القاضي عمر إبراهيم</span></li>
+      </ol>
+      <h3><span class="en-only">Methods</span><span class="ar-only">أساليب</span></h3>
+      <ul>
+        <li><span class="en-only">If–then cards: إن تدرسْ تنجحْ / إذا درستَ نجحتَ.</span><span class="ar-only">بطاقات الشرط والجواب.</span></li>
+        <li><span class="en-only">Maṣdar factory: from كتب → كتابة؛ من فتح → فتح.</span><span class="ar-only">مصنع المصادر.</span></li>
+        <li><span class="en-only">Number drills with gender agreement (3–10).</span><span class="ar-only">تدريب العدد مع التمييز.</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">1–2 · Conditional sentences</span><span class="ar-only">١–٢ · الجملة الشرطية</span></h2>
+      <p><span class="en-only"><strong>Core tools:</strong> إنْ، إذا، لو… Condition (شرط) + answer (جواب).</span>
+      <span class="ar-only"><strong>الأدوات:</strong> إنْ، إذا، لو… جملة الشرط + جملة الجواب.</span></p>
+      <div class="example">إن تدرسْ تنجحْ · إذا اجتهدتَ تفوّقتَ · لو حرصتَ ما ندمتَ</div>
+      <p><span class="en-only">With إنْ + two muḍāriʿ verbs, both are often majzūm in school paradigms.</span>
+      <span class="ar-only">مع إنْ والمضارع: جزم فعل الشرط وجوابه في النماذج المدرسية.</span></p>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">3–5 · Maṣdar · mafʿūl muṭlaq · time/place nouns</span><span class="ar-only">٣–٥ · المصدر والمفعول المطلق واسما الزمان والمكان</span></h2>
+      <table>
+        <tr><th><span class="en-only">Term</span><span class="ar-only">المصطلح</span></th><th><span class="en-only">Idea</span><span class="ar-only">الفكرة</span></th><th><span class="en-only">Example</span><span class="ar-only">مثال</span></th></tr>
+        <tr><td>المصدر</td><td><span class="en-only">Verbal noun naming the event</span><span class="ar-only">اسم الحدث</span></td><td>كتابة · قراءة · ذهاب</td></tr>
+        <tr><td>المفعول المطلق</td><td><span class="en-only">Maṣdar emphasising the verb</span><span class="ar-only">مصدر لتوكيد عامله أو بيان نوعه/عدده</span></td><td>كتبَ كتابةً · سار سيرًا حثيثًا</td></tr>
+        <tr><td>اسم الزمان/المكان</td><td><span class="en-only">Noun of time or place from the verb</span><span class="ar-only">من الفعل لزمان أو مكان</span></td><td>مكتب · ملعب · موعد</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">6–7 · Numbers &amp; ḥāl</span><span class="ar-only">٦–٧ · العدد والحال</span></h2>
+      <p><span class="en-only"><strong>Numbers 3–10:</strong> number often disagrees in gender with the singular of the counted noun; counted noun is usually majrūr plural (school rule focus).</span>
+      <span class="ar-only"><strong>٣–١٠:</strong> مخالفة العدد تمييزه في الجنس؛ التمييز جمع مجرور في الصورة المدرسية.</span></p>
+      <div class="example">ثلاثةُ كتبٍ · ثلاثُ طالباتٍ</div>
+      <p><span class="en-only"><strong>Ḥāl:</strong> describes the manner of the subject/object when the action happens; often indefinite manṣūb.</span>
+      <span class="ar-only"><strong>الحال:</strong> هيئة صاحبها وقت الفعل؛ غالبًا نكرة منصوبة.</span></p>
+      <div class="example">جاء الطالبُ مسرعًا · رأيتُ الهلالَ لامعًا</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">8–10 · Literature · ism tafḍīl</span><span class="ar-only">٨–١٠ · الأدب واسم التفضيل</span></h2>
+      <p><span class="en-only"><strong>Al-Khansāʾ:</strong> grief and praise of Ṣakhr — tone of elegy (rithāʾ).</span>
+      <span class="ar-only"><strong>الخنساء:</strong> الرثاء والفخر بصخر.</span></p>
+      <p><span class="en-only"><strong>اسم التفضيل:</strong> pattern أفعل (أكبر، أحسن) for comparison.</span>
+      <span class="ar-only"><strong>اسم التفضيل:</strong> وزن أفعل (أكبر، أحسن).</span></p>
+      <div class="example">العلمُ أحسنُ من الجهلِ · خديجةُ أكبرُ من أختها</div>
+      <p><span class="en-only"><strong>Qāḍī ʿUmar Ibrāhīm:</strong> three set lines from the school text — meaning and vocabulary.</span>
+      <span class="ar-only"><strong>القاضي عمر إبراهيم:</strong> ثلاثة أبيات مقررة مع المعنى.</span></p>
+    </div>
+  </section>
+
+  <!-- STUDENT T1 -->
+  <section class="panel" id="panel-student-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">STUDENTS · SS2 T1</span><span class="ar-only">الطلاب · الثاني · ١</span></span>
+      <h2><span class="en-only">Study notes · First Term</span><span class="ar-only">مذكرات الدراسة · الفصل الأول</span></h2>
+      <div class="goal">
+        <span class="en-only">Nominal/verbal · إنّ/كان · فاعل/نائب/مفعول · نعت · خطبة</span>
+        <span class="ar-only">الاسمية والفعلية · إنّ وكان · الفاعل ونائبه والمفعول · النعت · الخطبة</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>١ · <span class="en-only">Sentence types</span><span class="ar-only">نوعا الجملة</span></h2>
+      <div class="example">اسمية: العلمُ نورٌ · فعلية: يقرأُ الطالبُ</div>
+    </div>
+    <div class="card">
+      <h2>٢–٣ · إنّ / كان</h2>
+      <div class="example">إنّ العلمَ نورٌ · كان الجوُّ جميلًا</div>
+      <p><span class="en-only">إنّ: ism naṣb, khabar rafʿ · كان: ism rafʿ, khabar naṣb</span>
+      <span class="ar-only">إنّ تنصب الاسم وترفع الخبر · كان ترفع الاسم وتنصب الخبر</span></p>
+    </div>
+    <div class="card">
+      <h2>٤–٧ · <span class="en-only">Core roles</span><span class="ar-only">الأركان</span></h2>
+      <ul>
+        <li>الفاعل: كتبَ <strong>محمدٌ</strong></li>
+        <li>نائب الفاعل: فُتِحَ <strong>البابُ</strong></li>
+        <li>المفعول به: قرأَ الطالبُ <strong>الكتابَ</strong></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>٨ · النعت</h2>
+      <div class="example">هذا طالبٌ ذكيٌّ · مررتُ بالطالبِ الذكيِّ</div>
+    </div>
+    <div class="card">
+      <h2>٩–١٠ · الخطبة</h2>
+      <p><span class="en-only">Learn definition + aims; study set lines from Fatḥ Makkah sermon in your textbook.</span>
+      <span class="ar-only">احفظ التعريف والأغراض؛ ادرس النص المقرر لخطبة فتح مكة.</span></p>
+    </div>
+  </section>
+  <section class="panel" id="panel-student-2">
+    <div class="card">
+      <span class="badge"><span class="en-only">STUDENTS · SS2 T2</span><span class="ar-only">الطلاب · الثاني · ٢</span></span>
+      <h2><span class="en-only">Study notes · Second Term</span><span class="ar-only">مذكرات الدراسة · الفصل الثاني</span></h2>
+      <div class="goal">
+        <span class="en-only">Jarr · muḍāriʿ (jazm/naṣb) · ṣaḥīḥ/muʿtall · ism fiʿl · transitive · set texts</span>
+        <span class="ar-only">الجر · جزم/نصب المضارع · الصحيح والمعتل · اسم الفعل · التعدي · النصوص</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>١ · الجر</h2>
+      <p>من · إلى · في · على · عن · بـ · لـ</p>
+      <div class="example">جلستُ في الصفِّ · ذهبتُ إلى السوقِ</div>
+    </div>
+    <div class="card">
+      <h2>٢–٣ · المضارع</h2>
+      <table>
+        <tr><th>رفع</th><th>نصب</th><th>جزم</th></tr>
+        <tr><td>يكتبُ</td><td>لن يكتبَ</td><td>لم يكتبْ</td></tr>
+      </table>
+      <div class="example">لا تلعبْ في الصفِّ · أدرسُ كي أنجحَ</div>
+    </div>
+    <div class="card">
+      <h2>٥–٦ · الصحيح والمعتل</h2>
+      <ul>
+        <li>صحيح: كتب · فتح</li>
+        <li>مثال: وصل</li>
+        <li>أجوف: قال</li>
+        <li>ناقص: رمى</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>٨–٩ · اسم الفعل · متعدٍّ / لازم</h2>
+      <div class="example">صهْ (اسكت) · كتبَ الدرسَ (متعدٍ) · قعدَ (لازم)</div>
+    </div>
+    <div class="card">
+      <h2>٤ · ٧ · ١٠ · النصوص</h2>
+      <p><span class="en-only">Learn set lines; write the main idea of «لماذا يكرهوننا» in 3–5 lines.</span>
+      <span class="ar-only">احفظ الأبيات المقررة؛ اكتب الفكرة الرئيسة لـ«لماذا يكرهوننا» في ٣–٥ أسطر.</span></p>
+    </div>
+  </section>
+  <section class="panel" id="panel-student-3">
+    <div class="card">
+      <span class="badge"><span class="en-only">STUDENTS · SS2 T3</span><span class="ar-only">الطلاب · الثاني · ٣</span></span>
+      <h2><span class="en-only">Study notes · Third Term</span><span class="ar-only">مذكرات الدراسة · الفصل الثالث</span></h2>
+      <div class="goal">
+        <span class="en-only">Conditionals · maṣdar · mafʿūl muṭlaq · numbers · ḥāl · ism tafḍīl · set poems</span>
+        <span class="ar-only">الشرط · المصدر · المفعول المطلق · العدد · الحال · اسم التفضيل · الأشعار</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>١–٢ · الشرط</h2>
+      <div class="example">إن تصدقْ تُحترمْ · إذا ساعدتَ غيرَك ساعدك اللهُ</div>
+    </div>
+    <div class="card">
+      <h2>٣–٥ · المصدر · المفعول المطلق · الزمان/المكان</h2>
+      <ul>
+        <li>المصدر: كتابة · قراءة</li>
+        <li>مفعول مطلق: فهمتُ فهمًا</li>
+        <li>مكان/زمان: ملعب · موعد</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>٦–٧ · العدد والحال</h2>
+      <div class="example">خمسةُ أقلامٍ · خمسُ صفحاتٍ · وقف الخطيبُ واضحًا</div>
+    </div>
+    <div class="card">
+      <h2>٨–١٠ · الأدب واسم التفضيل</h2>
+      <div class="example">هذا الكتابُ أفضلُ كتابٍ · الصدقُ أحسنُ خلقٍ</div>
+      <p><span class="en-only">Memorise set lines of al-Khansāʾ and al-Qāḍī ʿUmar Ibrāhīm from your book.</span>
+      <span class="ar-only">احفظ أبيات الخنساء والقاضي عمر إبراهيم المقررة.</span></p>
+    </div>
+  </section>
+
+  <!-- EVAL T1 -->
+  <section class="panel" id="panel-eval-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">EVALUATION · SS2 T1 · 15 Q</span><span class="ar-only">التقويم · الثاني · ١ · ١٥</span></span>
+      <div id="quizBox1"></div>
+      <p id="quizScore1" style="font-weight:800;color:#5b21b6;min-height:1.4em"></p>
+    </div>
+  </section>
+  <section class="panel" id="panel-eval-2">
+    <div class="card">
+      <span class="badge"><span class="en-only">EVALUATION · SS2 T2 · 15 Q</span><span class="ar-only">التقويم · الثاني · ٢ · ١٥</span></span>
+      <div id="quizBox2"></div>
+      <p id="quizScore2" style="font-weight:800;color:#5b21b6;min-height:1.4em"></p>
+    </div>
+  </section>
+  <section class="panel" id="panel-eval-3">
+    <div class="card">
+      <span class="badge"><span class="en-only">EVALUATION · SS2 T3 · 15 Q</span><span class="ar-only">التقويم · الثاني · ٣ · ١٥</span></span>
+      <div id="quizBox3"></div>
+      <p id="quizScore3" style="font-weight:800;color:#5b21b6;min-height:1.4em"></p>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-keys-1">
+    <div class="card">
+      <button type="button" id="toggleKeys1" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+        <span class="en-only">Show / hide keys</span><span class="ar-only">إظهار / إخفاء</span>
+      </button>
+      <div class="keys hidden-keys" id="keysBox1"><ol id="keysList1"></ol></div>
+    </div>
+  </section>
+  <section class="panel" id="panel-keys-2">
+    <div class="card">
+      <button type="button" id="toggleKeys2" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+        <span class="en-only">Show / hide keys</span><span class="ar-only">إظهار / إخفاء</span>
+      </button>
+      <div class="keys hidden-keys" id="keysBox2"><ol id="keysList2"></ol></div>
+    </div>
+  </section>
+  <section class="panel" id="panel-keys-3">
+    <div class="card">
+      <button type="button" id="toggleKeys3" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+        <span class="en-only">Show / hide keys</span><span class="ar-only">إظهار / إخفاء</span>
+      </button>
+      <div class="keys hidden-keys" id="keysBox3"><ol id="keysList3"></ol></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-progress-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">PROGRESS · SS2</span><span class="ar-only">التقدّم · الثاني</span></span>
+      <h2><span class="en-only">Student progress monitoring</span><span class="ar-only">متابعة تقدّم الطالب</span></h2>
+      <p style="font-size:.88rem;color:var(--muted)">
+        <span class="en-only">Same pattern as SS1: term quizzes + end-of-year summative after Term 3.</span>
+        <span class="ar-only">نفس نمط الأول: اختبارات الفصول + ختامي بعد الفصل الثالث.</span>
+      </p>
+      <div class="progress-wrap" id="progressDashboard"></div>
+      <p style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" id="btnExportProg" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+          <span class="en-only">Copy report</span><span class="ar-only">نسخ التقرير</span>
+        </button>
+        <button type="button" id="btnResetProg" style="border:1px solid #fecaca;background:#fef2f2;color:#991b1b;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+          <span class="en-only">Reset SS2 progress</span><span class="ar-only">مسح تقدّم الثاني</span>
+        </button>
+      </p>
+      <p id="progMsg" style="font-size:.85rem;color:#5b21b6;min-height:1.2em"></p>
+    </div>
+  </section>
+  <section class="panel" id="panel-progress-2"></section>
+  <section class="panel" id="panel-progress-3"></section>
+
+  <section class="panel" id="panel-summative-1">
+    <div class="summ-banner">
+      <h2>
+        <span class="en-only">SS2 Summative Examination · End of Third Term</span>
+        <span class="ar-only">امتحان ختامي · نهاية الفصل الثالث · الثاني الثانوي</span>
+      </h2>
+      <p>
+        <span class="en-only">Covers Terms 1–3 · 25 questions · Best score saved in Progress</span>
+        <span class="ar-only">يشمل الفصول ١–٣ · ٢٥ سؤالًا · تُحفظ أفضل درجة في التقدّم</span>
+      </p>
+    </div>
+    <div class="card">
+      <div class="goal">
+        <span class="en-only"><strong>Instructions:</strong> Answer all items. Hints on wrong answers. Teacher may reveal keys after the exam window.</span>
+        <span class="ar-only"><strong>التعليمات:</strong> أجب عن الجميع. تلميح عند الخطأ. يُظهر المعلم المفتاح بعد نافذة الامتحان.</span>
+      </div>
+      <div id="quizBoxS"></div>
+      <p id="quizScoreS" style="font-weight:800;color:#5b21b6;min-height:1.4em"></p>
+      <button type="button" id="toggleKeysS" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer;margin-top:8px">
+        <span class="en-only">Show / hide summative keys</span><span class="ar-only">إظهار / إخفاء مفتاح الختامي</span>
+      </button>
+      <div class="keys hidden-keys" id="keysBoxS" style="margin-top:12px"><h3 style="color:#fde68a"><span class="en-only">Summative key</span><span class="ar-only">مفتاح الختامي</span></h3><ol id="keysListS"></ol></div>
+    </div>
+  </section>
+  <section class="panel" id="panel-summative-2"></section>
+  <section class="panel" id="panel-summative-3"></section>
+</main>
+<footer>Sealed Nectar Academy · SNA Arabic Studio · SSS 2 · Progress-ready</footer>
+
+<script>
+(function(){
+  var lang='en', term='1', panel='teacher';
+  function setLang(L){
+    lang=L; document.body.className=L;
+    document.getElementById('btnEn').classList.toggle('on', L==='en');
+    document.getElementById('btnAr').classList.toggle('on', L==='ar');
+    document.documentElement.lang=L==='ar'?'ar':'en';
+    document.documentElement.dir=L==='ar'?'rtl':'ltr';
+    buildAllQuizzes(); show();
+  }
+  window.setLang=setLang;
+
+  function show(){
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); });
+    var id = (panel==='progress'||panel==='summative') ? ('panel-'+panel+'-1') : ('panel-'+panel+'-'+term);
+    var el=document.getElementById(id); if(el) el.classList.add('on');
+    if(panel==='progress') renderProgress();
+  }
+  document.querySelectorAll('.bar button[data-term]').forEach(function(btn){
+    btn.onclick=function(){
+      document.querySelectorAll('.bar button[data-term]').forEach(function(b){b.classList.remove('on');});
+      btn.classList.add('on'); term=btn.getAttribute('data-term'); show();
+    };
+  });
+  document.querySelectorAll('.bar button[data-panel]').forEach(function(btn){
+    btn.onclick=function(){
+      document.querySelectorAll('.bar button[data-panel]').forEach(function(b){b.classList.remove('on');});
+      btn.classList.add('on'); panel=btn.getAttribute('data-panel'); show();
+    };
+  });
+
+  var SNA_AR = {
+    classId: 'SS2',
+    storageKey: 'sna_arabic_SS2_progress_v1',
+    load: function(){ try{return JSON.parse(localStorage.getItem(this.storageKey)||'{}');}catch(e){return{};} },
+    save: function(d){ try{localStorage.setItem(this.storageKey, JSON.stringify(d));}catch(e){} },
+    recordQuiz: function(termNo, score, total){
+      var d=this.load(); if(!d.terms) d.terms={};
+      var t=String(termNo); var prev=d.terms[t]||{best:0,attempts:0,total:total};
+      prev.attempts++; prev.total=total; if(score>(prev.best||0)) prev.best=score; prev.last=score;
+      prev.updated=new Date().toISOString(); d.terms[t]=prev; this.save(d); renderProgress();
+    },
+    recordSummative: function(score, total){
+      var d=this.load(); d.summative=d.summative||{best:0,attempts:0,total:total};
+      d.summative.attempts++; d.summative.total=total; if(score>(d.summative.best||0)) d.summative.best=score;
+      d.summative.last=score; this.save(d); renderProgress();
+    }
+  };
+
+  function renderProgress(){
+    var box=document.getElementById('progressDashboard'); if(!box) return;
+    var d=SNA_AR.load(), terms=d.terms||{}, done=0, html='<h3 style="margin:0 0 8px">'+(lang==='ar'?'ملخص الثاني الثانوي':'SS2 summary')+'</h3>';
+    for(var t=1;t<=3;t++){
+      var rec=terms[String(t)]; if(rec&&rec.attempts) done++;
+      html+='<div class="prog-row"><span class="prog-pill'+(rec&&rec.attempts?' done':'')+'">'+(lang==='ar'?'الفصل ':'Term ')+t+'</span>';
+      html+=(rec&&rec.attempts)?('<span style="font-size:.85rem">'+(lang==='ar'?'أفضل: ':'Best: ')+rec.best+'/'+rec.total+'</span>'):('<span style="font-size:.85rem;color:#94a3b8">'+(lang==='ar'?'لم يُختبر':'Not attempted')+'</span>');
+      html+='</div>';
+    }
+    var s=d.summative;
+    html+='<div class="prog-row"><span class="prog-pill'+(s&&s.attempts?' done':'')+'">'+(lang==='ar'?'ختامي':'Summative')+'</span>';
+    html+=(s&&s.attempts)?('<span style="font-size:.85rem">'+s.best+'/'+s.total+'</span>'):('<span style="font-size:.85rem;color:#94a3b8">'+(lang==='ar'?'بعد اكتمال الفصول':'After all terms')+'</span>');
+    html+='</div>';
+    html+='<div class="prog-row"><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:'+Math.round(done/3*100)+'%"></div></div><span>'+done+'/3</span></div>';
+    box.innerHTML=html;
+  }
+
+
+
+  var Q3 = [
+    {en:'In «إن تدرسْ تنجحْ» both verbs are typically…',ar:'في «إن تدرسْ تنجحْ» الفعلان غالبًا…',opts:{en:['manṣūb','majzūm','majrūr','ism'],ar:['منصوبان','مجزومان','مجروران','اسمان']},a:1,hint:{en:'Jazm in condition paradigms.',ar:'جزم.'}},
+    {en:'إذا is a tool of…',ar:'«إذا» من أدوات…',opts:{en:['jarr only','condition','sound feminine plural','inna only'],ar:['الجر فقط','الشرط','جمع مؤنث سالم','إنّ فقط']},a:1,hint:{en:'Conditional.',ar:'شرط.'}},
+    {en:'المصدر names the…',ar:'المصدر يدل على…',opts:{en:['only a preposition','the event/action as a noun','dual ending only','passive deputy only'],ar:['حرف جر فقط','الحدث اسمًا','علامة تثنية فقط','نائب فاعل فقط']},a:1,hint:{en:'Verbal noun.',ar:'اسم الحدث.'}},
+    {en:'كتبَ كتابةً — كتابةً is…',ar:'كتبَ كتابةً — كتابةً…',opts:{en:['ḥāl majrūr','mafʿūl muṭlaq','ḥarf jarr','mudāf only'],ar:['حال مجرور','مفعول مطلق','حرف جر','مضاف فقط']},a:1,hint:{en:'Absolute object.',ar:'مفعول مطلق.'}},
+    {en:'ملعب from لعب is often…',ar:'ملعب من لعب غالبًا…',opts:{en:['ism makān','ḥarf nāṣib','jawāzim','inna sister'],ar:['اسم مكان','حرف ناصب','جازم','من إنّ']},a:0,hint:{en:'Place noun.',ar:'اسم مكان.'}},
+    {en:'ثلاثةُ كتبٍ shows number agreement pattern for…',ar:'ثلاثةُ كتبٍ نمط لـ…',opts:{en:['1–2 only','3–10 school pattern','always feminine number with masculine noun only wrong always','no number rules'],ar:['١–٢ فقط','٣–١٠ في الصورة المدرسية','لا قواعد','أرقام بلا تمييز']},a:1,hint:{en:'3–10 rules.',ar:'ثلاثة…'}},
+    {en:'جاء الطالبُ مسرعًا — مسرعًا is…',ar:'جاء الطالبُ مسرعًا — مسرعًا…',opts:{en:['fāʿil','ḥāl','mudāf ilayh','jawm particle'],ar:['فاعل','حال','مضاف إليه','جازم']},a:1,hint:{en:'Ḥāl.',ar:'حال.'}},
+    {en:'Ḥāl is often…',ar:'الحال غالبًا…',opts:{en:['definite majrūr only','indefinite manṣūb','a preposition','muḍāriʿ majzūm only'],ar:['معرفة مجرورة فقط','نكرة منصوبة','حرف جر','مضارع مجزوم فقط']},a:1,hint:{en:'Indefinite accusative.',ar:'نكرة منصوبة.'}},
+    {en:'اسم التفضيل often follows pattern…',ar:'اسم التفضيل غالبًا على وزن…',opts:{en:['مفعول','أفعل','استفعال','تفاعل only'],ar:['مفعول','أفعل','استفعال','تفاعل فقط']},a:1,hint:{en:'أفعل',ar:'أفعل'}},
+    {en:'أحسنُ in «الصدقُ أحسنُ خلقٍ» is…',ar:'أحسنُ في المثال…',opts:{en:['ḥarf jarr','ism tafḍīl','nāʾib fāʿil of passive only','tanwīn particle'],ar:['حرف جر','اسم تفضيل','نائب فاعل فقط','أداة تنوين']},a:1,hint:{en:'Elative.',ar:'تفضيل.'}},
+    {en:'Al-Khansāʾ’s set text is mainly…',ar:'نص الخنساء المقرر أساسًا…',opts:{en:['a market list','rithāʾ / elegy','a grammar only table','a math rule'],ar:['قائمة سوق','رثاء','جدول نحوي فقط','قاعدة حساب']},a:1,hint:{en:'Elegy.',ar:'رثاء.'}},
+    {en:'Answer clause in a condition is called…',ar:'جملة جواب الشرط تُسمّى…',opts:{en:['jawāb al-sharṭ','only mudāf','only ḥāl','ism fiʿl'],ar:['جواب الشرط','مضاف فقط','حال فقط','اسم فعل']},a:0,hint:{en:'Jawāb.',ar:'جواب.'}},
+    {en:'Which is a maṣdar?',ar:'أيٌّ مصدر؟',opts:{en:['في','قراءة','لم','إنْ'],ar:['في','قراءة','لم','إنْ']},a:1,hint:{en:'قراءة',ar:'قراءة'}},
+    {en:'موعد can function as…',ar:'موعد قد يكون…',opts:{en:['ism zamān','ḥarf nahi only','sound m. plural ending','passive of kāna'],ar:['اسم زمان','لا ناهية فقط','جمع مذكر','مجهول كان']},a:0,hint:{en:'Time noun.',ar:'زمان.'}},
+    {en:'After finishing Term 3 you should take…',ar:'بعد إنهاء الفصل ٣ ينبغي…',opts:{en:['no assessment','the SS2 summative exam','only Term 1 again always','delete progress'],ar:['بلا تقويم','الامتحان الختامي للثاني','الفصل ١ فقط دائمًا','مسح التقدّم']},a:1,hint:{en:'Summative.',ar:'ختامي.'}}
+  ];
+
+  var Q2 = [
+    {en:'After the preposition في the noun is usually…',ar:'بعد «في» يكون الاسم عادة…',opts:{en:['marfūʿ','manṣūb','majrūr','majzūm'],ar:['مرفوعًا','منصوبًا','مجرورًا','مجزومًا']},a:2,hint:{en:'Jarr after preposition.',ar:'مجرور.'}},
+    {en:'Which is a ḥarf jarr?',ar:'أيٌّ من حروف الجر؟',opts:{en:['إنّ','في','كان','لم'],ar:['إنّ','في','كان','لم']},a:1,hint:{en:'في',ar:'في'}},
+    {en:'Mudāf ilayh is a path to…',ar:'المضاف إليه طريق إلى…',opts:{en:['jazm only','jarr','making verbs passive only','dual only'],ar:['الجزم فقط','الجر','بناء الفعل للمجهول فقط','التثنية فقط']},a:1,hint:{en:'Genitive.',ar:'جر.'}},
+    {en:'لم makes the muḍāriʿ…',ar:'«لم» تجعل المضارع…',opts:{en:['manṣūb','majzūm','marfūʿ always','ism'],ar:['منصوبًا','مجزومًا','مرفوعًا دائمًا','اسمًا']},a:1,hint:{en:'Jazm.',ar:'جزم.'}},
+    {en:'لن writes the muḍāriʿ as…',ar:'«لن» تنصب المضارع مثل…',opts:{en:['لم يكتبْ','لن يكتبَ','يكتبُ only','كتبَ'],ar:['لم يكتبْ','لن يكتبَ','يكتبُ فقط','كتبَ']},a:1,hint:{en:'Naṣb with لن.',ar:'نصب.'}},
+    {en:'Default case of free muḍāriʿ is…',ar:'إعراب المضارع إذا تجرّد من الناصب والجازم…',opts:{en:['jazm','naṣb','rafʿ','jarr'],ar:['جزم','نصب','رفع','جر']},a:2,hint:{en:'Rafʿ.',ar:'رفع.'}},
+    {en:'لا الناهية in «لا تلعبْ» causes…',ar:'لا الناهية في «لا تلعبْ»…',opts:{en:['naṣb','jazm','jarr','tanwīn only'],ar:['نصبًا','جزمًا','جرًّا','تنوينًا فقط']},a:1,hint:{en:'Jazm.',ar:'جزم.'}},
+    {en:'Verb كتبَ is…',ar:'كتبَ فعل…',opts:{en:['muʿtall ajwaf','ṣaḥīḥ','nāqiṣ','mithāl'],ar:['معتل أجوف','صحيح','ناقص','مثال']},a:1,hint:{en:'Sound verb.',ar:'صحيح.'}},
+    {en:'قالَ is typically…',ar:'قالَ يُعدّ…',opts:{en:['ṣaḥīḥ sālim only','muʿtall ajwaf','ism fiʿl','ḥarf jarr'],ar:['صحيحًا سالمًا فقط','معتلًا أجوف','اسم فعل','حرف جر']},a:1,hint:{en:'Hollow verb.',ar:'أجوف.'}},
+    {en:'رمى is…',ar:'رمى…',opts:{en:['muʿtall nāqiṣ','ṣaḥīḥ mahmūz','preposition','dual noun'],ar:['معتل ناقص','صحيح مهموز','حرف جر','مثنى']},a:0,hint:{en:'Defective last radical.',ar:'ناقص.'}},
+    {en:'وصلَ (first radical و) is…',ar:'وصلَ…',opts:{en:['ajwaf','nāqiṣ','mithāl','kāna sister'],ar:['أجوف','ناقص','مثال','من أخوات كان']},a:2,hint:{en:'Mithāl.',ar:'مثال.'}},
+    {en:'A transitive verb…',ar:'الفعل المتعدي…',opts:{en:['never takes an object','can take a direct object','is always a particle','is only dual'],ar:['لا مفعول له','ينصب مفعولًا','حرف دائمًا','مثنى فقط']},a:1,hint:{en:'Takes mafʿūl bihi.',ar:'متعدٍ.'}},
+    {en:'جلسَ with no object is…',ar:'جلسَ بلا مفعول…',opts:{en:['mutaʿaddī','lāzim','nawāṣib','jawāzim'],ar:['متعديًا','لازمًا','من النواصب','من الجوازم']},a:1,hint:{en:'Intransitive.',ar:'لازم.'}},
+    {en:'صهْ is an example of…',ar:'صهْ مثال لـ…',opts:{en:['ḥarf jarr','ism fiʿl','mudāf ilayh','sound feminine plural'],ar:['حرف جر','اسم فعل','مضاف إليه','جمع مؤنث سالم']},a:1,hint:{en:'Verb-noun.',ar:'اسم فعل.'}},
+    {en:'كي in «كي أنجحَ» is among…',ar:'«كي» في «كي أنجحَ» من…',opts:{en:['jawāzim','nawāṣib of muḍāriʿ','ḥurūf jarr only','inna sisters'],ar:['الجوازم','نواصب المضارع','حروف الجر فقط','إنّ وأخواتها']},a:1,hint:{en:'Naṣb particle.',ar:'ناصب.'}}
+  ];
+
+
+  var QS = [
+    {en:'Nominal sentence starts with a…',ar:'الجملة الاسمية تبدأ بـ…',opts:{en:['verb','noun','only particle','only number'],ar:['فعل','اسم','حرف فقط','عدد فقط']},a:1,hint:{en:'Noun.',ar:'اسم.'}},
+    {en:'إنّ installs…',ar:'إنّ…',opts:{en:['ism naṣb & khabar rafʿ','both always jarr','only jazm','no effect'],ar:['نصب الاسم ورفع الخبر','جر الاثنين','جزم فقط','بلا أثر']},a:0,hint:{en:'Inna pattern.',ar:'إنّ.'}},
+    {en:'كان installs…',ar:'كان…',opts:{en:['ism rafʿ & khabar naṣb','only jarr','only dual','particle jarr'],ar:['رفع الاسم ونصب الخبر','جر فقط','مثنى فقط','حرف جر']},a:0,hint:{en:'Kāna pattern.',ar:'كان.'}},
+    {en:'Doer of active verb is…',ar:'فاعل الفعل المعلوم…',opts:{en:['majrūr always','marfūʿ','manṣūb always','ḥarf'],ar:['مجرور دائمًا','مرفوع','منصوب دائمًا','حرف']},a:1,hint:{en:'Rafʿ.',ar:'رفع.'}},
+    {en:'In كُتِبَ الدرسُ · الدرسُ is…',ar:'في كُتِبَ الدرسُ · الدرسُ…',opts:{en:['mafʿūl of active','nāʾib fāʿil','ḥāl','jarr particle'],ar:['مفعول المعلوم','نائب فاعل','حال','حرف جر']},a:1,hint:{en:'Deputy doer.',ar:'نائب.'}},
+    {en:'المفعول به case…',ar:'إعراب المفعول به…',opts:{en:['rafʿ','naṣb','jarr','jazm'],ar:['رفع','نصب','جر','جزم']},a:1,hint:{en:'Naṣb.',ar:'نصب.'}},
+    {en:'Naʿt agrees with manʿūt in…',ar:'يطابق النعت المنعوت في…',opts:{en:['case only never gender','gender, number, definiteness, case','verbs only','nothing'],ar:['الإعراب فقط','النوع والعدد والتعريف والإعراب','الأفعال فقط','لا شيء']},a:1,hint:{en:'Full agreement.',ar:'مطابقة.'}},
+    {en:'في + noun → noun is…',ar:'في + اسم → الاسم…',opts:{en:['marfūʿ','manṣūb','majrūr','majzūm'],ar:['مرفوع','منصوب','مجرور','مجزوم']},a:2,hint:{en:'Jarr.',ar:'جر.'}},
+    {en:'لم + muḍāriʿ →…',ar:'لم + مضارع →…',opts:{en:['naṣb','jazm','jarr','rafʿ forced wrong'],ar:['نصب','جزم','جر','رفع خطأ']},a:1,hint:{en:'Jazm.',ar:'جزم.'}},
+    {en:'لن + muḍāriʿ →…',ar:'لن + مضارع →…',opts:{en:['jazm','naṣb','jarr','ism'],ar:['جزم','نصب','جر','اسم']},a:1,hint:{en:'Naṣb.',ar:'نصب.'}},
+    {en:'قالَ is…',ar:'قالَ…',opts:{en:['ṣaḥīḥ sālim','muʿtall ajwaf','ḥarf','dual'],ar:['صحيح سالم','معتل أجوف','حرف','مثنى']},a:1,hint:{en:'Hollow.',ar:'أجوف.'}},
+    {en:'كتبَ الدرسَ shows a verb that is…',ar:'كتبَ الدرسَ فعل…',opts:{en:['lāzim','mutaʿaddī','ism fiʿl','jawāzim'],ar:['لازم','متعدٍ','اسم فعل','جازم']},a:1,hint:{en:'Transitive.',ar:'متعدٍ.'}},
+    {en:'إن تدرسْ تنجحْ is a…',ar:'إن تدرسْ تنجحْ جملة…',opts:{en:['only iḍāfa','sharṭ / condition','only number','only ḥāl'],ar:['إضافة فقط','شرطية','عدد فقط','حال فقط']},a:1,hint:{en:'Conditional.',ar:'شرط.'}},
+    {en:'قراءة is a…',ar:'قراءة…',opts:{en:['ḥarf jarr','maṣdar','nāhiya','passive deputy'],ar:['حرف جر','مصدر','ناهية','نائب فاعل']},a:1,hint:{en:'Verbal noun.',ar:'مصدر.'}},
+    {en:'كتبَ كتابةً — كتابةً is…',ar:'كتبَ كتابةً — كتابةً…',opts:{en:['mafʿūl muṭlaq','ḥarf','mudāf ilayh only','majzūm verb'],ar:['مفعول مطلق','حرف','مضاف إليه فقط','فعل مجزوم']},a:0,hint:{en:'Absolute object.',ar:'مطلق.'}},
+    {en:'جاء مسرعًا — مسرعًا is…',ar:'جاء مسرعًا — مسرعًا…',opts:{en:['ḥāl','fāʿil marfūʿ of passive','jarr particle','number 3'],ar:['حال','فاعل','حرف جر','عدد']},a:0,hint:{en:'Ḥāl.',ar:'حال.'}},
+    {en:'أحسنُ is often…',ar:'أحسنُ غالبًا…',opts:{en:['ism tafḍīl','ḥarf jarr','jawāzim','sound f. plural'],ar:['اسم تفضيل','حرف جر','جازم','جمع مؤنث']},a:0,hint:{en:'Elative.',ar:'تفضيل.'}},
+    {en:'A khuṭbah is…',ar:'الخطبة…',opts:{en:['silent table only','oral address','broken plural form','tanwīn mark'],ar:['جدول فقط','خطاب شفهي','جمع تكسير','تنوين']},a:1,hint:{en:'Sermon/address.',ar:'خطبة.'}},
+    {en:'Default muḍāriʿ without nāṣib/jāzim is…',ar:'المضارع بلا ناصب ولا جازم…',opts:{en:['majzūm','manṣūb','marfūʿ','majrūr'],ar:['مجزوم','منصوب','مرفوع','مجرور']},a:2,hint:{en:'Rafʿ.',ar:'رفع.'}},
+    {en:'رمى is…',ar:'رمى…',opts:{en:['nāqiṣ','sālim only','preposition','inna'],ar:['ناقص','سالم فقط','حرف جر','إنّ']},a:0,hint:{en:'Defective.',ar:'ناقص.'}},
+    {en:'صهْ is…',ar:'صهْ…',opts:{en:['ism fiʿl','mudāf','number','passive'],ar:['اسم فعل','مضاف','عدد','مجهول']},a:0,hint:{en:'Verb-noun.',ar:'اسم فعل.'}},
+    {en:'ثلاثةُ كتبٍ illustrates…',ar:'ثلاثةُ كتبٍ يوضح…',opts:{en:['number 3–10 pattern','only dual','only jarr of inna','no grammar'],ar:['نمط ٣–١٠','مثنى فقط','جر إنّ فقط','بلا نحو']},a:0,hint:{en:'Number rules.',ar:'عدد.'}},
+    {en:'Al-Khansāʾ text type…',ar:'نص الخنساء…',opts:{en:['rithāʾ','math proof','cash book','circuit diagram'],ar:['رثاء','برهان رياضي','دفتر صندوق','دائرة كهرباء']},a:0,hint:{en:'Elegy.',ar:'رثاء.'}},
+    {en:'مبتدأ in الطالبُ نشيطٌ is…',ar:'المبتدأ في الطالبُ نشيطٌ…',opts:{en:['نشيطٌ','الطالبُ','في','كتب'],ar:['نشيطٌ','الطالبُ','في','كتب']},a:1,hint:{en:'الطالبُ',ar:'الطالبُ'}},
+    {en:'After SS2 Term 3 continuous work, take the…',ar:'بعد تقويم فصول الثاني اجلس…',opts:{en:['no exam','SS2 summative','only SS1 again','delete keys'],ar:['بلا امتحان','ختامي الثاني','الأول فقط','مسح المفاتيح']},a:1,hint:{en:'Summative.',ar:'ختامي.'}}
+  ];
+
+  var Q1 = [
+    {en:'A sentence starting with a noun is…',ar:'الجملة التي تبدأ باسم…',opts:{en:['verbal','nominal','particle only','always passive'],ar:['فعلية','اسمية','حرف فقط','مجهولة دائمًا']},a:1,hint:{en:'Nominal = ismiyyah.',ar:'اسمية.'}},
+    {en:'كتبَ الطالبُ is a…',ar:'كتبَ الطالبُ جملة…',opts:{en:['nominal','verbal','iḍāfa only','relative only'],ar:['اسمية','فعلية','إضافة فقط','موصول فقط']},a:1,hint:{en:'Starts with verb.',ar:'فعلية.'}},
+    {en:'In إنّ الطالبَ مجتهدٌ the word الطالبَ is…',ar:'في إنّ الطالبَ مجتهدٌ كلمة الطالبَ…',opts:{en:['khabar marfūʿ','ism inna manṣūb','fāʿil','ḥarf'],ar:['خبر مرفوع','اسم إنّ منصوب','فاعل','حرف']},a:1,hint:{en:'Ism of inna is manṣūb.',ar:'اسم إنّ منصوب.'}},
+    {en:'كان وأخواتها make the khabar…',ar:'كان وأخواتها تجعل الخبر…',opts:{en:['marfūʿ','manṣūb','majrūr','mazīd'],ar:['مرفوعًا','منصوبًا','مجرورًا','مزيدًا']},a:1,hint:{en:'Khabar kāna is manṣūb.',ar:'خبر كان منصوب.'}},
+    {en:'In كتبَ محمدٌ the word محمدٌ is…',ar:'في كتبَ محمدٌ كلمة محمدٌ…',opts:{en:['mafʿūl bihi','fāʿil','nāʾib fāʿil','naʿt'],ar:['مفعول به','فاعل','نائب فاعل','نعت']},a:1,hint:{en:'Doer.',ar:'فاعل.'}},
+    {en:'In كُتِبَ الدرسُ the word الدرسُ is…',ar:'في كُتِبَ الدرسُ كلمة الدرسُ…',opts:{en:['fāʿil of active','nāʾib fāʿil','mafʿūl only in active form','ḥarf'],ar:['فاعل معلوم','نائب فاعل','مفعول في المعلوم','حرف']},a:1,hint:{en:'Passive deputy doer.',ar:'نائب فاعل.'}},
+    {en:'المفعول به is usually in…',ar:'المفعول به يكون عادة في…',opts:{en:['rafʿ','naṣb','jarr','jazm'],ar:['رفع','نصب','جر','جزم']},a:1,hint:{en:'Naṣb.',ar:'نصب.'}},
+    {en:'Which is a marfūʿ role?',ar:'أيٌّ من المرفوعات؟',opts:{en:['mafʿūl bihi','fāʿil','mudāf ilayh after min','object of inna ism'],ar:['مفعول به','فاعل','مضاف إليه بعد من','اسم إنّ']},a:1,hint:{en:'Fāʿil is marfūʿ.',ar:'الفاعل مرفوع.'}},
+    {en:'النعت follows المنعوت in…',ar:'يتبع النعت المنعوت في…',opts:{en:['case only never gender','gender, number, definiteness, case','verbs only','particles only'],ar:['الإعراب فقط','النوع والعدد والتعريف والإعراب','الأفعال فقط','الحروف فقط']},a:1,hint:{en:'Full agreement.',ar:'مطابقة كاملة.'}},
+    {en:'Correct: جاء الطالبُ …',ar:'الصحيح: جاء الطالبُ …',opts:{en:['المجتهدَ','المجتهدُ','المجتهدِ only as object','المجتهدْ'],ar:['المجتهدَ','المجتهدُ','المجتهدِ مفعولًا','المجتهدْ']},a:1,hint:{en:'Naʿt matches rafʿ.',ar:'نعت مرفوع.'}},
+    {en:'A khuṭbah is primarily…',ar:'الخطبة أساسًا…',opts:{en:['a silent diagram','an oral address','a broken plural','a dual marker'],ar:['رسم صامت','خطاب شفهي','جمع تكسير','علامة تثنية']},a:1,hint:{en:'Oral sermon/address.',ar:'خطاب.'}},
+    {en:'كان الطالبُ مجتهدًا — مجتهدًا is…',ar:'كان الطالبُ مجتهدًا — مجتهدًا…',opts:{en:['ism kāna','khabar kāna manṣūb','fāʿil','naʿt majrūr'],ar:['اسم كان','خبر كان منصوب','فاعل','نعت مجرور']},a:1,hint:{en:'Khabar kāna.',ar:'خبر كان.'}},
+    {en:'Passive of فتحَ البابَ (approx. school level) centres on…',ar:'المبني للمجهول يرتبط بـ…',opts:{en:['nāʾib fāʿil raised','always deleting all meaning','removing iʿrāb','only duals'],ar:['نائب فاعل مرفوع','حذف المعنى','إلغاء الإعراب','المثنى فقط']},a:0,hint:{en:'Deputy doer.',ar:'نائب الفاعل.'}},
+    {en:'Fatḥ Makkah sermon theme includes…',ar:'من معاني خطبة فتح مكة…',opts:{en:['mercy and restraint from revenge','encouraging chaos','ignoring people','only grammar drills'],ar:['الرحمة وترك الثأر','الفوضى','إهمال الناس','تدريبات فقط']},a:0,hint:{en:'Mercy/unity.',ar:'رحمة.'}},
+    {en:'الطالبُ مجتهدٌ — الطالبُ is…',ar:'الطالبُ مجتهدٌ — الطالبُ…',opts:{en:['khabar','mubtadaʾ','fāʿil of past verb','ḥarf'],ar:['خبر','مبتدأ','فاعل','حرف']},a:1,hint:{en:'Mubtadaʾ.',ar:'مبتدأ.'}}
+  ];
+
+  function buildQuiz(boxId, scoreId, keysId, questions){
+    var box=document.getElementById(boxId); if(!box||!questions) return;
+    var html='';
+    questions.forEach(function(q,qi){
+      html+='<div class="q" data-qi="'+qi+'"><div class="stem">'+(qi+1)+'. '+(lang==='ar'?q.ar:q.en)+'</div><div class="opts">';
+      (lang==='ar'?q.opts.ar:q.opts.en).forEach(function(op,oi){ html+='<button type="button" data-oi="'+oi+'">'+op+'</button>'; });
+      html+='</div><div class="hint"></div></div>';
+    });
+    box.innerHTML=html;
+    var sc=document.getElementById(scoreId); if(sc) sc.textContent='';
+    box.querySelectorAll('.q').forEach(function(wrap){
+      var qi=+wrap.getAttribute('data-qi'); var hint=wrap.querySelector('.hint');
+      wrap.querySelectorAll('button').forEach(function(btn){
+        btn.onclick=function(){
+          wrap.querySelectorAll('button').forEach(function(b){b.classList.remove('ok','bad');});
+          var oi=+btn.getAttribute('data-oi');
+          if(oi===questions[qi].a){
+            btn.classList.add('ok'); hint.className='hint ok'; hint.textContent=lang==='ar'?'✓ صحيحة':'✓ Correct';
+            wrap.querySelectorAll('button').forEach(function(b){b.disabled=true;});
+          } else {
+            btn.classList.add('bad'); hint.className='hint bad';
+            hint.textContent='✗ '+(lang==='ar'?questions[qi].hint.ar:questions[qi].hint.en);
+          }
+          var n=0; box.querySelectorAll('.q').forEach(function(w){ if(w.querySelector('button.ok')) n++; });
+          if(sc) sc.textContent=(lang==='ar'?'النتيجة: ':'Score: ')+n+' / '+questions.length;
+          if(scoreId==='quizScore1') SNA_AR.recordQuiz(1,n,questions.length);
+          if(scoreId==='quizScore2') SNA_AR.recordQuiz(2,n,questions.length);
+          if(scoreId==='quizScore3') SNA_AR.recordQuiz(3,n,questions.length);
+          if(scoreId==='quizScoreS') SNA_AR.recordSummative(n,questions.length);
+        };
+      });
+    });
+    var kl=document.getElementById(keysId);
+    if(kl) kl.innerHTML=questions.map(function(q,i){ return '<li><strong>'+(i+1)+'.</strong> '+(lang==='ar'?q.opts.ar:q.opts.en)[q.a]+'</li>'; }).join('');
+  }
+
+  function buildAllQuizzes(){ buildQuiz('quizBox1','quizScore1','keysList1', Q1); buildQuiz('quizBox2','quizScore2','keysList2', Q2); buildQuiz('quizBox3','quizScore3','keysList3', Q3); buildQuiz('quizBoxS','quizScoreS','keysListS', QS); renderProgress(); }
+
+  document.getElementById('toggleKeys1').onclick=function(){ document.getElementById('keysBox1').classList.toggle('show'); };
+  var tk2=document.getElementById('toggleKeys2'); if(tk2) tk2.onclick=function(){ document.getElementById('keysBox2').classList.toggle('show'); };
+  var tk3=document.getElementById('toggleKeys3'); if(tk3) tk3.onclick=function(){ document.getElementById('keysBox3').classList.toggle('show'); };
+  var tks=document.getElementById('toggleKeysS'); if(tks) tks.onclick=function(){ document.getElementById('keysBoxS').classList.toggle('show'); };
+  document.getElementById('btnExportProg').onclick=function(){
+    var d=SNA_AR.load(), lines=['SNA Arabic · SS2 Progress', new Date().toLocaleString()];
+    for(var t=1;t<=3;t++){ var r=(d.terms||{})[String(t)]; lines.push(r?('Term '+t+': '+r.best+'/'+r.total):('Term '+t+': n/a')); }
+    var textOut=lines.join('\n');
+    if(navigator.clipboard) navigator.clipboard.writeText(textOut).then(function(){ document.getElementById('progMsg').textContent=lang==='ar'?'تم النسخ':'Copied'; });
+    else document.getElementById('progMsg').textContent=textOut;
+  };
+  document.getElementById('btnResetProg').onclick=function(){
+    if(confirm(lang==='ar'?'مسح تقدّم الثاني؟':'Reset SS2 progress?')){ localStorage.removeItem(SNA_AR.storageKey); renderProgress(); document.getElementById('progMsg').textContent=lang==='ar'?'تم':'Cleared'; }
+  };
+
+  buildAllQuizzes(); show();
+})();
+</script>
+</body>
+</html>
