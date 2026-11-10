@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SNA Arabic Studio · SSS 1 Terms 1–3 · معلم / طالب</title>
+<style>
+  :root {
+    --navy: #0b1c3d; --gold: #c9a227; --teal: #0f766e; --bg: #f8fafc;
+    --card: #ffffff; --line: #e2e8f0; --ink: #1e293b; --muted: #64748b;
+    --ok: #166534; --bad: #9f1239;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", "Noto Naskh Arabic", "Amiri", "Traditional Arabic", Tahoma, sans-serif;
+    background: linear-gradient(180deg, #ecfeff 0%, var(--bg) 40%);
+    color: var(--ink); line-height: 1.65;
+  }
+  body.ar { direction: rtl; }
+  body.en { direction: ltr; }
+  header {
+    background: linear-gradient(135deg, #0f172a, #134e4a);
+    color: #ecfdf5; padding: 18px 16px 14px; text-align: center;
+    border-bottom: 3px solid var(--gold);
+  }
+  header h1 { margin: 0 0 6px; font-size: 1.2rem; }
+  header p { margin: 0; font-size: .86rem; opacity: .92; }
+  .bar {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    padding: 10px 12px; background: #fff; border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 20;
+  }
+  .bar button {
+    border: 1px solid var(--line); background: #f1f5f9; color: var(--navy);
+    border-radius: 999px; padding: 7px 12px; font-weight: 700; cursor: pointer; font-size: .8rem;
+  }
+  .bar button.on {
+    background: linear-gradient(135deg, #0f766e, #115e59); color: #fff; border-color: #0f766e;
+  }
+  .lang-btn.on { background: linear-gradient(135deg, #c9a227, #a16207); color: #fff; border-color: #a16207; }
+  .term-btn.on { background: linear-gradient(135deg, #7c3aed, #5b21b6); color: #fff; border-color: #5b21b6; }
+  main { max-width: 940px; margin: 0 auto; padding: 16px 14px 40px; }
+  .panel { display: none; }
+  .panel.on { display: block; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 6px 18px rgba(15,23,42,.05);
+  }
+  .card h2 { margin: 0 0 8px; font-size: 1.05rem; color: var(--navy); }
+  .card h3 { margin: 14px 0 6px; font-size: .95rem; color: var(--teal); }
+  .badge {
+    display: inline-block; font-size: .68rem; font-weight: 800;
+    padding: 3px 10px; border-radius: 999px; background: #ccfbf1; color: #115e59; margin-bottom: 8px;
+  }
+  .goal {
+    background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px;
+    padding: 10px 12px; margin: 8px 0 12px; font-size: .9rem; color: #78350f;
+  }
+  .example {
+    background: #f0fdfa; border-left: 4px solid #0d9488; border-radius: 8px;
+    padding: 10px 12px; margin: 10px 0; font-size: .9rem;
+  }
+  body.ar .example { border-left: none; border-right: 4px solid #0d9488; }
+  table { width: 100%; border-collapse: collapse; font-size: .86rem; margin: 8px 0 12px; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: start; vertical-align: top; }
+  th { background: #f1f5f9; color: var(--navy); }
+  .q {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px; margin-bottom: 10px;
+  }
+  .q .stem { font-weight: 700; margin-bottom: 8px; color: var(--navy); }
+  .opts { display: grid; gap: 6px; }
+  .opts button {
+    text-align: start; padding: 9px 12px; border-radius: 8px; border: 1px solid #cbd5e1;
+    background: #f8fafc; cursor: pointer; font-size: .86rem;
+  }
+  body.ar .opts button { text-align: right; }
+  .opts button.ok { border-color: #16a34a; background: #dcfce7; }
+  .opts button.bad { border-color: #dc2626; background: #fee2e2; }
+  .hint { font-size: .8rem; margin-top: 6px; color: var(--muted); min-height: 1.2em; }
+  .hint.ok { color: var(--ok); }
+  .hint.bad { color: var(--bad); }
+  .keys { background: #0f172a; color: #e2e8f0; border-radius: 12px; padding: 14px; font-size: .88rem; }
+  .keys h3 { color: #fde68a; margin-top: 0; }
+  .hidden-keys { display: none; }
+  .hidden-keys.show { display: block; }
+  footer { text-align: center; font-size: .75rem; color: var(--muted); padding: 8px 12px 24px; }
+  .ar-only { display: none; }
+  .en-only { display: none; }
+  body.ar .ar-only { display: block; }
+  body.en .en-only { display: block; }
+  body.ar span.ar-only, body.en span.en-only { display: inline; }
+  .poem {
+    background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 12px;
+    padding: 12px 14px; margin: 10px 0; text-align: center; line-height: 2;
+  }
+  .term-tag {
+    display: inline-block; font-size: .7rem; font-weight: 800; padding: 2px 8px;
+    border-radius: 6px; background: #ede9fe; color: #5b21b6; margin-inline-start: 6px;
+  }
+
+  .progress-wrap {
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    padding: 12px 14px; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(15,23,42,.04);
+  }
+  .progress-wrap h3 { margin: 0 0 8px; font-size: .95rem; color: var(--navy); }
+  .prog-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; align-items: center; }
+  .prog-pill {
+    font-size: .75rem; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+    background: #f1f5f9; color: #475569; border: 1px solid var(--line);
+  }
+  .prog-pill.done { background: #dcfce7; color: #166534; border-color: #86efac; }
+  .prog-bar-bg {
+    height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden; flex: 1; min-width: 120px;
+  }
+  .prog-bar-fill {
+    height: 100%; background: linear-gradient(90deg, #0d9488, #059669); width: 0%; transition: width .35s;
+  }
+  .summ-banner {
+    background: linear-gradient(135deg, #0f172a, #7c3aed); color: #f5f3ff;
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
+  }
+  .summ-banner h2 { margin: 0 0 6px; font-size: 1.05rem; }
+  .summ-banner p { margin: 0; font-size: .85rem; opacity: .95; }
+
+</style>
+</head>
+<body class="en">
+<header>
+  <div class="badge" style="background:#fde68a;color:#78350f">SNA LANGUAGE STUDIO · ARABIC</div>
+  <h1>
+    <span class="en-only">SSS 1 · Arabic Studio (Terms 1–3)</span>
+    <span class="ar-only">الأول الثانوي · استوديو العربية (الفصول ١–٣)</span>
+  </h1>
+  <p>
+    <span class="en-only">Teacher notes · Student notes · Evaluation · Answer keys · AR/EN switch</span>
+    <span class="ar-only">مذكرات المعلم · مذكرات الطالب · التقويم · نماذج الإجابة · عربي/إنجليزي</span>
+  </p>
+</header>
+
+<div class="bar">
+  <button type="button" class="lang-btn on" id="btnEn" onclick="setLang('en')">English</button>
+  <button type="button" class="lang-btn" id="btnAr" onclick="setLang('ar')">العربية</button>
+  <button type="button" class="term-btn on" data-term="1" id="term1Btn">
+    <span class="en-only">1st Term</span><span class="ar-only">الفصل ١</span>
+  </button>
+  <button type="button" class="term-btn" data-term="2" id="term2Btn">
+    <span class="en-only">2nd Term</span><span class="ar-only">الفصل ٢</span>
+  </button>
+  <button type="button" class="term-btn" data-term="3" id="term3Btn">
+    <span class="en-only">3rd Term</span><span class="ar-only">الفصل ٣</span>
+  </button>
+  <button type="button" class="on" data-panel="teacher">
+    <span class="en-only">Teacher</span><span class="ar-only">المعلم</span>
+  </button>
+  <button type="button" data-panel="student">
+    <span class="en-only">Student</span><span class="ar-only">الطالب</span>
+  </button>
+  <button type="button" data-panel="eval">
+    <span class="en-only">Evaluation</span><span class="ar-only">التقويم</span>
+  </button>
+  <button type="button" data-panel="keys">
+    <span class="en-only">Keys</span><span class="ar-only">الإجابات</span>
+  </button>
+  <button type="button" data-panel="progress">
+    <span class="en-only">Progress</span><span class="ar-only">التقدّم</span>
+  </button>
+  <button type="button" data-panel="summative" style="background:#7c3aed;color:#fff;border-color:#5b21b6">
+    <span class="en-only">Summative Exam</span><span class="ar-only">امتحان ختامي</span>
+  </button>
+</div>
+
+<main>
+  <!-- ================= TEACHER T1 ================= -->
+  <section class="panel on" id="panel-teacher-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">FOR TEACHERS · TERM 1</span><span class="ar-only">للمعلمين · الفصل الأول</span></span>
+      <h2>
+        <span class="en-only">SSS 1 First Term · Teaching guide</span>
+        <span class="ar-only">الأول الثانوي · الفصل الأول · دليل التدريس</span>
+      </h2>
+      <div class="goal">
+        <span class="en-only"><strong>Unit goal:</strong> Classify word types, use near/far demonstratives and relative pronouns, form the dual, and meet selected literature (Zuhair; happy family).</span>
+        <span class="ar-only"><strong>هدف الوحدة:</strong> تصنيف أنواع الكلمة، واستعمال الإشارة والموصولات، وإتقان التثنية، والتعرف على نصوص أدبية مختارة.</span>
+      </div>
+      <h3><span class="en-only">10-lesson sequence</span><span class="ar-only">تسلسل ١٠ دروس</span></h3>
+      <ol>
+        <li><span class="en-only">Word types: ism, fiʿl, ḥarf</span><span class="ar-only">أنواع الكلمة: اسم، فعل، حرف</span></li>
+        <li><span class="en-only">Signs of each type</span><span class="ar-only">علامات كل نوع</span></li>
+        <li><span class="en-only">Near demonstratives</span><span class="ar-only">أسماء الإشارة للقريب</span></li>
+        <li><span class="en-only">Far demonstratives</span><span class="ar-only">أسماء الإشارة للبعيد</span></li>
+        <li><span class="en-only">Relative pronouns</span><span class="ar-only">الأسماء الموصولة</span></li>
+        <li><span class="en-only">Masculine &amp; feminine</span><span class="ar-only">المذكر والمؤنث</span></li>
+        <li><span class="en-only">The dual</span><span class="ar-only">التثنية وكيفيتها</span></li>
+        <li><span class="en-only">Literature ages overview</span><span class="ar-only">الأدب وعصوره</span></li>
+        <li><span class="en-only">Zuhair — wisdom lines</span><span class="ar-only">شعر زهير في الحكمة</span></li>
+        <li><span class="en-only">Happy family theme</span><span class="ar-only">الأسرة السعيدة</span></li>
+      </ol>
+      <h3><span class="en-only">Methods</span><span class="ar-only">أساليب</span></h3>
+      <ul>
+        <li><span class="en-only">Interact first: sort word cards into اسم / فعل / حرف.</span><span class="ar-only">التفاعل أولًا: تصنيف بطاقات الكلمات.</span></li>
+        <li><span class="en-only">Contrast tables for near vs far demonstratives.</span><span class="ar-only">جداول مقارنة للإشارة.</span></li>
+        <li><span class="en-only">Oral drill of dual endings انِ / ينِ.</span><span class="ar-only">تدريب شفهي على انِ / ينِ.</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">1–2 · Word types &amp; signs</span><span class="ar-only">١–٢ · أنواع الكلمة وعلاماتها</span></h2>
+      <table>
+        <tr><th><span class="en-only">Type</span><span class="ar-only">النوع</span></th><th><span class="en-only">Meaning</span><span class="ar-only">المعنى</span></th><th><span class="en-only">Signs</span><span class="ar-only">العلامات</span></th></tr>
+        <tr><td>اسم</td><td><span class="en-only">Person, thing, idea</span><span class="ar-only">إنسان أو شيء أو معنى</span></td><td><span class="en-only">tanwīn; ال؛ dual/plural</span><span class="ar-only">التنوين؛ أل؛ التثنية والجمع</span></td></tr>
+        <tr><td>فعل</td><td><span class="en-only">Action in time</span><span class="ar-only">حدث مقترن بزمان</span></td><td><span class="en-only">تاء الفاعل؛ قد/س/سوف</span><span class="ar-only">تاء الفاعل؛ قد / س / سوف</span></td></tr>
+        <tr><td>حرف</td><td><span class="en-only">Needs other words</span><span class="ar-only">لا يستقل بالمعنى</span></td><td><span class="en-only">No noun/verb signs</span><span class="ar-only">لا علامات الاسم ولا الفعل</span></td></tr>
+      </table>
+      <div class="example">كتبَ الطالبُ في الدفترِ — كتبَ (فعل)، الطالبُ (اسم)، في (حرف)، الدفترِ (اسم).</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">3–4 · Demonstratives</span><span class="ar-only">٣–٤ · أسماء الإشارة</span></h2>
+      <table>
+        <tr><th></th><th><span class="en-only">Near</span><span class="ar-only">قريب</span></th><th><span class="en-only">Far</span><span class="ar-only">بعيد</span></th></tr>
+        <tr><td><span class="en-only">M. sg.</span><span class="ar-only">مفرد مذكر</span></td><td>هذا</td><td>ذلك</td></tr>
+        <tr><td><span class="en-only">F. sg.</span><span class="ar-only">مفرد مؤنث</span></td><td>هذه</td><td>تلك</td></tr>
+        <tr><td><span class="en-only">M. dual</span><span class="ar-only">مثنى مذكر</span></td><td>هذان/هذين</td><td>ذانك/ذينك</td></tr>
+        <tr><td><span class="en-only">F. dual</span><span class="ar-only">مثنى مؤنث</span></td><td>هاتان/هاتين</td><td>تانك/تينك</td></tr>
+        <tr><td><span class="en-only">Plural</span><span class="ar-only">جمع</span></td><td>هؤلاء</td><td>أولئك</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">5–7 · Relatives, gender, dual</span><span class="ar-only">٥–٧ · الموصولات والجنس والتثنية</span></h2>
+      <p>الذي، اللذان/اللذين، الذين؛ التي، اللتان/اللتين، اللائي/اللاتي</p>
+      <div class="example">معلم → معلمانِ / معلمينِ · طالبة → طالبتانِ / طالبتينِ</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">8–10 · Literature &amp; theme</span><span class="ar-only">٨–١٠ · الأدب والموضوع</span></h2>
+      <p><span class="en-only">Ages overview: Jāhiliyyah → modern. Zuhair: wisdom (ḥikmah). Happy family: cooperation and respect.</span>
+      <span class="ar-only">عصور الأدب من الجاهلية إلى الحديث. زهير: الحكمة. الأسرة السعيدة: التعاون والاحترام.</span></p>
+    </div>
+  </section>
+
+  <!-- ================= TEACHER T2 ================= -->
+  <section class="panel" id="panel-teacher-2">
+    <div class="card">
+      <span class="badge"><span class="en-only">FOR TEACHERS · TERM 2</span><span class="ar-only">للمعلمين · الفصل الثاني</span></span>
+      <h2>
+        <span class="en-only">SSS 1 Second Term · Teaching guide</span>
+        <span class="ar-only">الأول الثانوي · الفصل الثاني · دليل التدريس</span>
+      </h2>
+      <div class="goal">
+        <span class="en-only"><strong>Unit goal:</strong> Use detached and attached pronouns; form broken and sound plurals; introduce iʿrāb (case) with vowels/letters; study Ibn Fūdī lines; theme texts (market, holiday) and an anthem.</span>
+        <span class="ar-only"><strong>هدف الوحدة:</strong> استعمال الضمائر المنفصلة والمتصلة؛ صياغة جمع التكسير والجمع السالم؛ مقدمة في الإعراب؛ دراسة أبيات ابن فودي؛ نصوص السوق والعطلة والأنشودة.</span>
+      </div>
+      <h3><span class="en-only">10-lesson sequence</span><span class="ar-only">تسلسل ١٠ دروس</span></h3>
+      <ol>
+        <li><span class="en-only">Detached pronouns (الضمائر المنفصلة)</span><span class="ar-only">الضمائر المنفصلة</span></li>
+        <li><span class="en-only">Attached pronouns (الضمائر المتصلة)</span><span class="ar-only">الضمائر المتصلة</span></li>
+        <li><span class="en-only">Singular &amp; broken plural (قلة/كثرة)</span><span class="ar-only">المفرد وجمع التكسير (قلة وكثرة)</span></li>
+        <li><span class="en-only">Sound masculine plural</span><span class="ar-only">جمع المذكر السالم</span></li>
+        <li><span class="en-only">Sound feminine plural</span><span class="ar-only">جمع المؤنث السالم</span></li>
+        <li><span class="en-only">Iʿrāb and its types</span><span class="ar-only">الإعراب وأنواعه</span></li>
+        <li><span class="en-only">Vowels &amp; letters used in iʿrāb</span><span class="ar-only">الحركات والحروف في الإعراب</span></li>
+        <li><span class="en-only">Poetry: ʿAbdullāh ibn Fūdī (jihād theme, 5 lines)</span><span class="ar-only">شعر عبد الله بن فودي في الجهاد</span></li>
+        <li><span class="en-only">Themes: the market; the holiday</span><span class="ar-only">السوق والعطلة</span></li>
+        <li><span class="en-only">The anthem (الأنشودة)</span><span class="ar-only">الأنشودة</span></li>
+      </ol>
+      <h3><span class="en-only">Methods</span><span class="ar-only">أساليب</span></h3>
+      <ul>
+        <li><span class="en-only"><strong>Pronoun charts:</strong> fill-in drills (أنا → ـي / ني).</span><span class="ar-only"><strong>جداول الضمائر:</strong> تمارين ملء الفراغ.</span></li>
+        <li><span class="en-only"><strong>Plural sorting:</strong> cards into سالم مذكر / سالم مؤنث / تكسير.</span><span class="ar-only"><strong>فرز الجموع:</strong> بطاقات إلى سالم وتكسير.</span></li>
+        <li><span class="en-only"><strong>Iʿrāb intro:</strong> colour-code ḍammah / fatḥah / kasrah on one model sentence daily.</span><span class="ar-only"><strong>مقدمة الإعراب:</strong> تلوين الضمة والفتحة والكسرة يوميًا.</span></li>
+        <li><span class="en-only"><strong>Literature:</strong> meaning and values; not only memorisation.</span><span class="ar-only"><strong>الأدب:</strong> المعنى والقيم لا الحفظ وحده.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><span class="en-only">1–2 · Pronouns</span><span class="ar-only">١–٢ · الضمائر</span></h2>
+      <h3><span class="en-only">Detached (منفصلة) — stand alone</span><span class="ar-only">المنفصلة — مستقلة</span></h3>
+      <table>
+        <tr><th></th><th><span class="en-only">Singular</span><span class="ar-only">مفرد</span></th><th><span class="en-only">Dual</span><span class="ar-only">مثنى</span></th><th><span class="en-only">Plural</span><span class="ar-only">جمع</span></th></tr>
+        <tr><td>1st</td><td>أنا</td><td>—</td><td>نحن</td></tr>
+        <tr><td>2nd m.</td><td>أنتَ</td><td>أنتما</td><td>أنتم</td></tr>
+        <tr><td>2nd f.</td><td>أنتِ</td><td>أنتما</td><td>أنتنّ</td></tr>
+        <tr><td>3rd m.</td><td>هو</td><td>هما</td><td>هم</td></tr>
+        <tr><td>3rd f.</td><td>هي</td><td>هما</td><td>هنّ</td></tr>
+      </table>
+      <h3><span class="en-only">Attached (متصلة) — examples</span><span class="ar-only">المتصلة — أمثلة</span></h3>
+      <table>
+        <tr><th><span class="en-only">Meaning</span><span class="ar-only">المعنى</span></th><th><span class="en-only">On noun</span><span class="ar-only">مع الاسم</span></th><th><span class="en-only">On verb</span><span class="ar-only">مع الفعل</span></th></tr>
+        <tr><td><span class="en-only">my / me</span><span class="ar-only">ي / ني</span></td><td>كتابي</td><td>ضربني</td></tr>
+        <tr><td><span class="en-only">your (m.)</span><span class="ar-only">كَ</span></td><td>كتابك</td><td>ضربك</td></tr>
+        <tr><td><span class="en-only">his / him</span><span class="ar-only">ه</span></td><td>كتابه</td><td>ضربه</td></tr>
+        <tr><td><span class="en-only">her</span><span class="ar-only">ها</span></td><td>كتابها</td><td>ضربها</td></tr>
+        <tr><td><span class="en-only">our / us</span><span class="ar-only">نا</span></td><td>كتابنا</td><td>ضربنا</td></tr>
+      </table>
+      <div class="example">
+        <span class="en-only"><strong>Board:</strong> أنا طالبٌ · كتابي جديدٌ · ساعدني المعلمُ</span>
+        <span class="ar-only"><strong>سبورة:</strong> أنا طالبٌ · كتابي جديدٌ · ساعدني المعلمُ</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="en-only">3–5 · Plurals</span><span class="ar-only">٣–٥ · الجموع</span></h2>
+      <table>
+        <tr><th><span class="en-only">Type</span><span class="ar-only">النوع</span></th><th><span class="en-only">How it forms</span><span class="ar-only">التكوين</span></th><th><span class="en-only">Example</span><span class="ar-only">مثال</span></th></tr>
+        <tr><td><span class="en-only">Broken (تكسير)</span><span class="ar-only">جمع التكسير</span></td><td><span class="en-only">Internal change; jamʿ qilla / kathra patterns</span><span class="ar-only">تغيير داخل الكلمة؛ قلة وكثرة</span></td><td>كتاب → كتب · قلم → أقلام</td></tr>
+        <tr><td><span class="en-only">Sound m.</span><span class="ar-only">مذكر سالم</span></td><td><span class="en-only">ونَ / ينَ</span><span class="ar-only">ونَ رفعًا و ينَ نصبًا وجرًّا</span></td><td>معلم → معلمون / معلمين</td></tr>
+        <tr><td><span class="en-only">Sound f.</span><span class="ar-only">مؤنث سالم</span></td><td><span class="en-only">ات</span><span class="ar-only">ألف وتاء</span></td><td>طالبة → طالبات</td></tr>
+      </table>
+      <p><span class="en-only"><strong>Teaching note:</strong> Broken plurals are memorised by pattern exposure; sound plurals follow clear endings.</span>
+      <span class="ar-only"><strong>ملاحظة:</strong> جمع التكسير يُكتسب بالأنماط؛ السالم له علامات مطّردة.</span></p>
+    </div>
+
+    <div class="card">
+      <h2><span class="en-only">6–7 · Iʿrāb (case) introduction</span><span class="ar-only">٦–٧ · مقدمة الإعراب</span></h2>
+      <p><span class="en-only"><strong>Iʿrāb:</strong> change at the end of the word according to its role (subject, object, after preposition…).</span>
+      <span class="ar-only"><strong>الإعراب:</strong> تغيّر في آخر الكلمة بحسب موقعها (فاعل، مفعول، بعد حرف جر…).</span></p>
+      <table>
+        <tr><th><span class="en-only">Case</span><span class="ar-only">الحالة</span></th><th><span class="en-only">Common vowel</span><span class="ar-only">الحركة الشائعة</span></th><th><span class="en-only">Example role</span><span class="ar-only">مثال الموقع</span></th></tr>
+        <tr><td>رفع</td><td>ضمة ُ</td><td><span class="en-only">فاعل / مبتدأ</span><span class="ar-only">فاعل / مبتدأ</span></td></tr>
+        <tr><td>نصب</td><td>فتحة َ</td><td><span class="en-only">مفعول به</span><span class="ar-only">مفعول به</span></td></tr>
+        <tr><td>جر</td><td>كسرة ِ</td><td><span class="en-only">after preposition</span><span class="ar-only">بعد حرف الجر</span></td></tr>
+      </table>
+      <div class="example">
+        كتبَ <strong>الطالبُ</strong> <strong>الدرسَ</strong> في <strong>الدفترِ</strong>
+        <br/><span class="en-only">(actor = rafʿ · object = naṣb · after في = jarr)</span>
+        <span class="ar-only">(فاعل مرفوع · مفعول منصوب · مجرور بفي)</span>
+      </div>
+      <p><span class="en-only"><strong>Letters in iʿrāb:</strong> dual and sound masculine plural use letters (ا، و، ي) instead of only short vowels.</span>
+      <span class="ar-only"><strong>حروف الإعراب:</strong> المثنى وجمع المذكر السالم يُعربان بالحروف (ا، و، ي) لا بالحركات وحدها.</span></p>
+    </div>
+
+    <div class="card">
+      <h2><span class="en-only">8–10 · Literature &amp; themes</span><span class="ar-only">٨–١٠ · الأدب والموضوعات</span></h2>
+      <p><span class="en-only"><strong>Ibn Fūdī:</strong> five set lines on struggle/jihad in the spiritual-moral sense used in the school text — stress vocabulary of effort, faith, and steadfastness.</span>
+      <span class="ar-only"><strong>ابن فودي:</strong> خمسة أبيات مقررة — ركّز على ألفاظ الجهد والإيمان والثبات وفق النص المدرسي.</span></p>
+      <p><span class="en-only"><strong>Market &amp; holiday:</strong> guided reading + short functional writing (what you buy; how you spend a holiday).</span>
+      <span class="ar-only"><strong>السوق والعطلة:</strong> قراءة موجّهة + تعبير وظيفي قصير.</span></p>
+      <p><span class="en-only"><strong>Anthem:</strong> rhythm, class chant, meaning of key lines.</span>
+      <span class="ar-only"><strong>الأنشودة:</strong> الإيقاع والحفظ المفهم للمعنى.</span></p>
+    </div>
+  </section>
+
+  <!-- ================= STUDENT T1 ================= -->
+  <section class="panel" id="panel-student-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">STUDENTS · TERM 1</span><span class="ar-only">الطلاب · الفصل ١</span></span>
+      <h2><span class="en-only">Study notes · First Term</span><span class="ar-only">مذكرات الدراسة · الفصل الأول</span></h2>
+      <div class="goal">
+        <span class="en-only">Know ism/fiʿl/ḥarf, demonstratives, relatives, dual, Zuhair &amp; happy family.</span>
+        <span class="ar-only">أتقن الاسم والفعل والحرف والإشارة والموصولات والتثنية وزهير والأسرة السعيدة.</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>١–٢ · <span class="en-only">Word types</span><span class="ar-only">أنواع الكلمة</span></h2>
+      <ul>
+        <li><strong>اسم:</strong> كتاب، معلم، صدق</li>
+        <li><strong>فعل:</strong> كتبَ، يكتبُ، اكتبْ</li>
+        <li><strong>حرف:</strong> في، من، على</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>٣–٤ · <span class="en-only">Demonstratives</span><span class="ar-only">أسماء الإشارة</span></h2>
+      <p><strong>قريب:</strong> هذا، هذه، هذان، هاتان، هؤلاء</p>
+      <p><strong>بعيد:</strong> ذلك، تلك، ذانك، تانك، أولئك</p>
+      <div class="example">هذا كتابٌ · هذه مدرسةٌ · ذلك قلمٌ · تلك سيارةٌ</div>
+    </div>
+    <div class="card">
+      <h2>٥–٧ · <span class="en-only">Relatives &amp; dual</span><span class="ar-only">الموصولات والتثنية</span></h2>
+      <p>الذي / التي · اللذان / اللتان · الذين / اللائي</p>
+      <div class="example">طالبانِ مجتهدانِ · رأيتُ طالبينِ</div>
+    </div>
+    <div class="card">
+      <h2>٨–١٠ · <span class="en-only">Literature</span><span class="ar-only">الأدب</span></h2>
+      <p><span class="en-only">Zuhair → wisdom. Happy family → تعاون، احترام، محبة، مسؤولية.</span>
+      <span class="ar-only">زهير → الحكمة. الأسرة السعيدة → تعاون، احترام، محبة، مسؤولية.</span></p>
+    </div>
+  </section>
+
+  <!-- ================= STUDENT T2 ================= -->
+  <section class="panel" id="panel-student-2">
+    <div class="card">
+      <span class="badge"><span class="en-only">STUDENTS · TERM 2</span><span class="ar-only">الطلاب · الفصل ٢</span></span>
+      <h2><span class="en-only">Study notes · Second Term</span><span class="ar-only">مذكرات الدراسة · الفصل الثاني</span></h2>
+      <div class="goal">
+        <span class="en-only">Pronouns · plurals · basic iʿrāb · Ibn Fūdī · market, holiday, anthem.</span>
+        <span class="ar-only">الضمائر · الجموع · الإعراب الأساسي · ابن فودي · السوق والعطلة والأنشودة.</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>١ · <span class="en-only">Detached pronouns</span><span class="ar-only">الضمائر المنفصلة</span></h2>
+      <p>أنا · نحن · أنتَ · أنتِ · أنتما · أنتم · أنتنّ · هو · هي · هما · هم · هنّ</p>
+      <div class="example">أنا مجتهدٌ · نحن طلابٌ · هي معلمةٌ</div>
+    </div>
+    <div class="card">
+      <h2>٢ · <span class="en-only">Attached pronouns</span><span class="ar-only">الضمائر المتصلة</span></h2>
+      <p>كتابي · كتابك · كتابه · كتابها · كتابنا · كتابكم</p>
+      <div class="example">ساعدني · سألك · كتبنا الدرسَ</div>
+    </div>
+    <div class="card">
+      <h2>٣–٥ · <span class="en-only">Plurals</span><span class="ar-only">الجموع</span></h2>
+      <ul>
+        <li><span class="en-only"><strong>Broken:</strong> كتاب → كتب · قلم → أقلام</span><span class="ar-only"><strong>تكسير:</strong> كتاب → كتب · قلم → أقلام</span></li>
+        <li><span class="en-only"><strong>Sound m.:</strong> معلم → معلمون / معلمين</span><span class="ar-only"><strong>مذكر سالم:</strong> معلمون / معلمين</span></li>
+        <li><span class="en-only"><strong>Sound f.:</strong> طالبة → طالبات</span><span class="ar-only"><strong>مؤنث سالم:</strong> طالبات</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>٦–٧ · <span class="en-only">Iʿrāb basics</span><span class="ar-only">أساسيات الإعراب</span></h2>
+      <table>
+        <tr><th>رفع ُ</th><th>نصب َ</th><th>جر ِ</th></tr>
+        <tr><td>الطالبُ</td><td>الدرسَ</td><td>في الدفترِ</td></tr>
+      </table>
+      <div class="example">كتبَ الطالبُ الدرسَ في الدفترِ</div>
+    </div>
+    <div class="card">
+      <h2>٨–١٠ · <span class="en-only">Literature &amp; themes</span><span class="ar-only">الأدب والموضوعات</span></h2>
+      <p><span class="en-only">Memorise your five Ibn Fūdī lines with meaning. Practise short paragraphs on <strong>السوق</strong> and <strong>العطلة</strong>. Learn the class <strong>أنشودة</strong> with understanding.</span>
+      <span class="ar-only">احفظ أبيات ابن فودي الخمسة مع المعنى. تمرّن على فقرة عن السوق والعطلة. تعلّم الأنشودة بفهم.</span></p>
+    </div>
+  </section>
+
+
+  <!-- ================= TEACHER T3 ================= -->
+  <section class="panel" id="panel-teacher-3">
+    <div class="card">
+      <span class="badge"><span class="en-only">FOR TEACHERS · TERM 3</span><span class="ar-only">للمعلمين · الفصل الثالث</span></span>
+      <h2>
+        <span class="en-only">SSS 1 Third Term · Teaching guide</span>
+        <span class="ar-only">الأول الثانوي · الفصل الثالث · دليل التدريس</span>
+      </h2>
+      <div class="goal">
+        <span class="en-only"><strong>Unit goal:</strong> Explain iḍāfa (annexation) and its types; write a useful sentence; classify verbs as mujarrad/mazīd (triliteral &amp; quadriliteral); form related imperfect verbs; use the cooperation story in reading/writing.</span>
+        <span class="ar-only"><strong>هدف الوحدة:</strong> شرح الإضافة وأنواعها؛ كتابة الجملة المفيدة؛ تصنيف الفعل إلى مجرد ومزيد (ثلاثي ورباعي)؛ صياغة المضارع؛ توظيف قصة التعاون قراءةً وتعبيرًا.</span>
+      </div>
+      <h3><span class="en-only">10-lesson sequence</span><span class="ar-only">تسلسل ١٠ دروس</span></h3>
+      <ol>
+        <li><span class="en-only">Iḍāfa (الإضافة)</span><span class="ar-only">الإضافة</span></li>
+        <li><span class="en-only">Types of iḍāfa</span><span class="ar-only">أنواع الإضافة</span></li>
+        <li><span class="en-only">Story: Cooperation (قصة التعاون)</span><span class="ar-only">قصة التعاون</span></li>
+        <li><span class="en-only">The useful / complete sentence (الجملة المفيدة)</span><span class="ar-only">الجملة المفيدة</span></li>
+        <li><span class="en-only">Verb: mujarrad vs mazīd; 3-letter &amp; 4-letter roots</span><span class="ar-only">الفعل: مجرد ومزيد؛ ثلاثي ورباعي</span></li>
+        <li><span class="en-only">Triliteral mazīd — group 1</span><span class="ar-only">مزيد الثلاثي (١)</span></li>
+        <li><span class="en-only">Triliteral mazīd — group 2</span><span class="ar-only">مزيد الثلاثي (٢)</span></li>
+        <li><span class="en-only">Quadriliteral: bare form &amp; +1 letter</span><span class="ar-only">الرباعي المجرد والمزيد بحرف</span></li>
+        <li><span class="en-only">Quadriliteral +2 letters</span><span class="ar-only">الرباعي المزيد بحرفين</span></li>
+        <li><span class="en-only">Imperfect (muḍāriʿ) of these verbs</span><span class="ar-only">مضارع هذه الأفعال</span></li>
+      </ol>
+      <h3><span class="en-only">Methods</span><span class="ar-only">أساليب</span></h3>
+      <ul>
+        <li><span class="en-only"><strong>Iḍāfa pairs:</strong> students build كتابُ الطالبِ / بابُ المدرسةِ on cards.</span><span class="ar-only"><strong>أزواج الإضافة:</strong> بناء تراكيب على بطاقات.</span></li>
+        <li><span class="en-only"><strong>Verb lab:</strong> colour root letters vs extra letters (مزيد).</span><span class="ar-only"><strong>مختبر الفعل:</strong> تلوين حروف الأصل وحروف الزيادة.</span></li>
+        <li><span class="en-only"><strong>Pattern chart:</strong> فعّل، فاعل، أفعل… with one example each.</span><span class="ar-only"><strong>لوحة الأوزان:</strong> فعّل، فاعل، أفعل… مع مثال لكل وزن.</span></li>
+        <li><span class="en-only"><strong>Story:</strong> moral of cooperation before grammar extraction.</span><span class="ar-only"><strong>القصة:</strong> العبرة ثم استخراج التراكيب.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><span class="en-only">1–2 · Iḍāfa (annexation)</span><span class="ar-only">١–٢ · الإضافة</span></h2>
+      <p><span class="en-only"><strong>Iḍāfa:</strong> a noun linked to another noun (or pronoun) showing possession or relation: <em>the book of the student</em>.</span>
+      <span class="ar-only"><strong>الإضافة:</strong> نسبة اسم إلى اسم آخر أو ضمير للدلالة على الملك أو الارتباط.</span></p>
+      <table>
+        <tr><th><span class="en-only">Part</span><span class="ar-only">الركن</span></th><th><span class="en-only">Arabic name</span><span class="ar-only">المصطلح</span></th><th><span class="en-only">Example</span><span class="ar-only">مثال</span></th></tr>
+        <tr><td><span class="en-only">First noun (possessed)</span><span class="ar-only">الاسم الأول</span></td><td>المضاف</td><td>كتابُ</td></tr>
+        <tr><td><span class="en-only">Second (possessor)</span><span class="ar-only">الاسم الثاني</span></td><td>المضاف إليه</td><td>الطالبِ</td></tr>
+      </table>
+      <div class="example">كتابُ الطالبِ · بابُ المدرسةِ · قلمُهُ</div>
+      <p><span class="en-only"><strong>Rules (core):</strong> المضاف drops tanwīn / nun of dual &amp; sound m. plural; المضاف إليه is majrūr (genitive).</span>
+      <span class="ar-only"><strong>أحكام أساس:</strong> حذف تنوين المضاف ونون المثنى وجمع المذكر السالم؛ المضاف إليه مجرور.</span></p>
+      <p><span class="en-only"><strong>Types (school level):</strong> معنوية (true possession/relation) and لفظية (often with active participle + object, lighter meaning).</span>
+      <span class="ar-only"><strong>الأنواع:</strong> إضافة معنوية وإضافة لفظية (كما في المقرر).</span></p>
+    </div>
+
+    <div class="card">
+      <h2><span class="en-only">3–4 · Cooperation story &amp; useful sentence</span><span class="ar-only">٣–٤ · قصة التعاون والجملة المفيدة</span></h2>
+      <p><span class="en-only"><strong>Story focus:</strong> teamwork, shared work, kindness — extract vocabulary then retell in 4–6 Arabic lines.</span>
+      <span class="ar-only"><strong>محور القصة:</strong> التعاون والعمل المشترك — استخراج المفردات ثم إعادة السرد.</span></p>
+      <p><span class="en-only"><strong>الجملة المفيدة:</strong> a complete useful sentence that gives a full meaning (nominal or verbal).</span>
+      <span class="ar-only"><strong>الجملة المفيدة:</strong> ما تمّ بها المعنى (اسمية أو فعلية).</span></p>
+      <div class="example">
+        <span class="en-only">Verbal: كتبَ الطالبُ · Nominal: الطالبُ مجتهدٌ</span>
+        <span class="ar-only">فعلية: كتبَ الطالبُ · اسمية: الطالبُ مجتهدٌ</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="en-only">5–9 · Verb classification (mujarrad / mazīd)</span><span class="ar-only">٥–٩ · تصنيف الفعل (مجرد / مزيد)</span></h2>
+      <table>
+        <tr><th><span class="en-only">Kind</span><span class="ar-only">النوع</span></th><th><span class="en-only">Idea</span><span class="ar-only">الفكرة</span></th><th><span class="en-only">Example</span><span class="ar-only">مثال</span></th></tr>
+        <tr><td><span class="en-only">Triliteral mujarrad</span><span class="ar-only">ثلاثي مجرد</span></td><td><span class="en-only">3 root letters only</span><span class="ar-only">ثلاثة أصول بلا زيادة</span></td><td>كتب · جلس · فتح</td></tr>
+        <tr><td><span class="en-only">Triliteral mazīd</span><span class="ar-only">ثلاثي مزيد</span></td><td><span class="en-only">3 roots + extra letter(s)</span><span class="ar-only">أصول + حروف زيادة</span></td><td>درّس · قاتل · أكرم · انفتح · تعلّم</td></tr>
+        <tr><td><span class="en-only">Quadriliteral mujarrad</span><span class="ar-only">رباعي مجرد</span></td><td><span class="en-only">4 root letters</span><span class="ar-only">أربعة أصول</span></td><td>دحرج · زلزل</td></tr>
+        <tr><td><span class="en-only">Quadriliteral mazīd</span><span class="ar-only">رباعي مزيد</span></td><td><span class="en-only">4 roots + extra letter(s)</span><span class="ar-only">أربعة أصول + زيادة</span></td><td>تدحرج · احرنجم (as in advanced lists)</td></tr>
+      </table>
+      <h3><span class="en-only">Common triliteral mazīd patterns (intro)</span><span class="ar-only">أوزان المزيد الثلاثي الشائعة (مقدمة)</span></h3>
+      <table>
+        <tr><th><span class="en-only">Pattern</span><span class="ar-only">الوزن</span></th><th><span class="en-only">Example</span><span class="ar-only">مثال</span></th><th><span class="en-only">Note</span><span class="ar-only">ملاحظة</span></th></tr>
+        <tr><td>فعّل</td><td>درّس</td><td><span class="en-only">doubling middle radical</span><span class="ar-only">تضعيف العين</span></td></tr>
+        <tr><td>فاعل</td><td>قاتل</td><td><span class="en-only">alif after first radical</span><span class="ar-only">ألف بعد الفاء</span></td></tr>
+        <tr><td>أفعل</td><td>أكرم</td><td><span class="en-only">hamza prefix</span><span class="ar-only">همزة في الأول</span></td></tr>
+        <tr><td>تفعّل</td><td>تعلّم</td><td><span class="en-only">ت + doubling</span><span class="ar-only">تاء + تضعيف</span></td></tr>
+        <tr><td>انفعل</td><td>انفتح</td><td><span class="en-only">انـ prefix</span><span class="ar-only">زيادة انـ</span></td></tr>
+        <tr><td>افتعل</td><td>اجتمع</td><td><span class="en-only">ا · ت around root</span><span class="ar-only">افتعال</span></td></tr>
+      </table>
+      <p><span class="en-only"><strong>Teaching note:</strong> Students need recognition + one clear example per pattern this term, not full morphology encyclopaedia.</span>
+      <span class="ar-only"><strong>ملاحظة:</strong> يكفي التمييز ومثال واضح لكل وزن في هذا الفصل.</span></p>
+    </div>
+
+    <div class="card">
+      <h2><span class="en-only">10 · Muḍāriʿ (imperfect) of these verbs</span><span class="ar-only">١٠ · مضارع هذه الأفعال</span></h2>
+      <p><span class="en-only">Map past → imperfect with class list: كتبَ → يكتبُ · درّسَ → يُدرّسُ · أكرمَ → يُكرمُ · تعلّمَ → يتعلّمُ.</span>
+      <span class="ar-only">ربط الماضي بالمضارع من قائمة الصف: كتبَ → يكتبُ · درّسَ → يُدرّسُ · أكرمَ → يُكرمُ · تعلّمَ → يتعلّمُ.</span></p>
+      <div class="example">
+        <span class="en-only">Daily oral: student says past + imperfect for 5 verbs.</span>
+        <span class="ar-only">تدريب يومي: الماضي ثم المضارع لخمسة أفعال.</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ================= STUDENT T3 ================= -->
+  <section class="panel" id="panel-student-3">
+    <div class="card">
+      <span class="badge"><span class="en-only">STUDENTS · TERM 3</span><span class="ar-only">الطلاب · الفصل ٣</span></span>
+      <h2><span class="en-only">Study notes · Third Term</span><span class="ar-only">مذكرات الدراسة · الفصل الثالث</span></h2>
+      <div class="goal">
+        <span class="en-only">Iḍāfa · useful sentence · mujarrad/mazīd verbs · muḍāriʿ · cooperation story.</span>
+        <span class="ar-only">الإضافة · الجملة المفيدة · المجرد والمزيد · المضارع · قصة التعاون.</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>١–٢ · <span class="en-only">Iḍāfa</span><span class="ar-only">الإضافة</span></h2>
+      <p><span class="en-only"><strong>المضاف + المضاف إليه</strong> → كتابُ الطالبِ</span>
+      <span class="ar-only"><strong>المضاف + المضاف إليه</strong> → كتابُ الطالبِ</span></p>
+      <ul>
+        <li><span class="en-only">المضاف: no tanwīn; dual/sound m. plural lose ن</span><span class="ar-only">المضاف بلا تنوين؛ تحذف نون المثنى وجمع المذكر السالم</span></li>
+        <li><span class="en-only">المضاف إليه: majrūr (ِ)</span><span class="ar-only">المضاف إليه مجرور</span></li>
+      </ul>
+      <div class="example">بابُ البيتِ · معلمو المدرسةِ · قلمها</div>
+    </div>
+    <div class="card">
+      <h2>٣–٤ · <span class="en-only">Story &amp; sentence</span><span class="ar-only">القصة والجملة</span></h2>
+      <p><span class="en-only"><strong>التعاون:</strong> work together · help · succeed as a team.</span>
+      <span class="ar-only"><strong>التعاون:</strong> العمل معًا والمساعدة ونجاح الفريق.</span></p>
+      <p><span class="en-only"><strong>جملة مفيدة:</strong> complete meaning — اسمية أو فعلية.</span>
+      <span class="ar-only"><strong>جملة مفيدة:</strong> معنى تام — اسمية أو فعلية.</span></p>
+      <div class="example">الطلابُ يتعاونونَ · التعاونُ خيرٌ</div>
+    </div>
+    <div class="card">
+      <h2>٥–٩ · <span class="en-only">Verb types</span><span class="ar-only">أنواع الفعل</span></h2>
+      <ul>
+        <li><strong>مجرد ثلاثي:</strong> كتب · فتح · جلس</li>
+        <li><strong>مزيد ثلاثي:</strong> درّس · قاتل · أكرم · تعلّم · انفتح</li>
+        <li><strong>رباعي مجرد:</strong> دحرج · زلزل</li>
+        <li><strong>رباعي مزيد:</strong> تدحرج …</li>
+      </ul>
+      <div class="example">
+        <span class="en-only">Spot extra letters: درّس (double ر) · أكرم (أ) · تعلّم (ت + double).</span>
+        <span class="ar-only">لاحظ الزيادة: درّس · أكرم · تعلّم.</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>١٠ · <span class="en-only">Imperfect</span><span class="ar-only">المضارع</span></h2>
+      <table>
+        <tr><th><span class="en-only">Past</span><span class="ar-only">ماض</span></th><th><span class="en-only">Imperfect</span><span class="ar-only">مضارع</span></th></tr>
+        <tr><td>كتبَ</td><td>يكتبُ</td></tr>
+        <tr><td>درّسَ</td><td>يُدرّسُ</td></tr>
+        <tr><td>أكرمَ</td><td>يُكرمُ</td></tr>
+        <tr><td>تعلّمَ</td><td>يتعلّمُ</td></tr>
+        <tr><td>دحرجَ</td><td>يُدحرجُ</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= EVAL ================= -->
+  <section class="panel" id="panel-eval-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">EVALUATION · TERM 1 · 15 Q</span><span class="ar-only">التقويم · الفصل ١ · ١٥ سؤالًا</span></span>
+      <h2><span class="en-only">Choose the best answer</span><span class="ar-only">اختر الإجابة الصحيحة</span></h2>
+      <div id="quizBox1"></div>
+      <p id="quizScore1" style="font-weight:800;color:var(--teal);min-height:1.4em"></p>
+    </div>
+  </section>
+  <section class="panel" id="panel-eval-2">
+    <div class="card">
+      <span class="badge"><span class="en-only">EVALUATION · TERM 2 · 15 Q</span><span class="ar-only">التقويم · الفصل ٢ · ١٥ سؤالًا</span></span>
+      <h2><span class="en-only">Choose the best answer</span><span class="ar-only">اختر الإجابة الصحيحة</span></h2>
+      <div id="quizBox2"></div>
+      <p id="quizScore2" style="font-weight:800;color:var(--teal);min-height:1.4em"></p>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-eval-3">
+    <div class="card">
+      <span class="badge"><span class="en-only">EVALUATION · TERM 3 · 15 Q</span><span class="ar-only">التقويم · الفصل ٣ · ١٥ سؤالًا</span></span>
+      <h2><span class="en-only">Choose the best answer</span><span class="ar-only">اختر الإجابة الصحيحة</span></h2>
+      <div id="quizBox3"></div>
+      <p id="quizScore3" style="font-weight:800;color:var(--teal);min-height:1.4em"></p>
+    </div>
+  </section>
+
+  <!-- ================= KEYS ================= -->
+  <section class="panel" id="panel-keys-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">ANSWER KEYS · TERM 1</span><span class="ar-only">نماذج الإجابة · الفصل ١</span></span>
+      <p><button type="button" id="toggleKeys1" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+        <span class="en-only">Show / hide keys</span><span class="ar-only">إظهار / إخفاء</span>
+      </button></p>
+      <div class="keys hidden-keys" id="keysBox1"><ol id="keysList1"></ol></div>
+    </div>
+  </section>
+  <section class="panel" id="panel-keys-2">
+    <div class="card">
+      <span class="badge"><span class="en-only">ANSWER KEYS · TERM 2</span><span class="ar-only">نماذج الإجابة · الفصل ٢</span></span>
+      <p><button type="button" id="toggleKeys2" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+        <span class="en-only">Show / hide keys</span><span class="ar-only">إظهار / إخفاء</span>
+      </button></p>
+      <div class="keys hidden-keys" id="keysBox2"><ol id="keysList2"></ol></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-keys-3">
+    <div class="card">
+      <span class="badge"><span class="en-only">ANSWER KEYS · TERM 3</span><span class="ar-only">نماذج الإجابة · الفصل ٣</span></span>
+      <p><button type="button" id="toggleKeys3" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+        <span class="en-only">Show / hide keys</span><span class="ar-only">إظهار / إخفاء</span>
+      </button></p>
+      <div class="keys hidden-keys" id="keysBox3"><ol id="keysList3"></ol></div>
+    </div>
+  </section>
+
+
+  <section class="panel" id="panel-progress-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">STUDENT PROGRESS · SS1</span><span class="ar-only">تقدّم الطالب · الأول الثانوي</span></span>
+      <h2><span class="en-only">Progress monitoring</span><span class="ar-only">متابعة التقدّم</span></h2>
+      <p style="font-size:.88rem;color:var(--muted)">
+        <span class="en-only">Scores are saved on this device. Same progress pattern will be used for SS2 and SS3.</span>
+        <span class="ar-only">تُحفظ الدرجات على هذا الجهاز. يُستخدم النمط نفسه للثاني والثالث الثانوي.</span>
+      </p>
+      <div class="progress-wrap" id="progressDashboard"></div>
+      <p style="display:flex;flex-wrap:wrap;gap:8px">
+        <button type="button" id="btnExportProg" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+          <span class="en-only">Copy progress report</span><span class="ar-only">نسخ تقرير التقدّم</span>
+        </button>
+        <button type="button" id="btnResetProg" style="border:1px solid #fecaca;background:#fef2f2;color:#991b1b;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer">
+          <span class="en-only">Reset SS1 progress</span><span class="ar-only">إعادة تعيين تقدّم الأول</span>
+        </button>
+      </p>
+      <p id="progMsg" style="font-size:.85rem;color:var(--teal);min-height:1.2em"></p>
+    </div>
+  </section>
+  <section class="panel" id="panel-progress-2"></section>
+  <section class="panel" id="panel-progress-3"></section>
+
+  <section class="panel" id="panel-summative-1">
+    <div class="summ-banner">
+      <h2>
+        <span class="en-only">SS1 Summative Examination · End of Third Term</span>
+        <span class="ar-only">امتحان ختامي · نهاية الفصل الثالث · الأول الثانوي</span>
+      </h2>
+      <p>
+        <span class="en-only">Covers Terms 1–3 · 25 questions · Stored as final SS1 summative score</span>
+        <span class="ar-only">يشمل الفصول ١–٣ · ٢٥ سؤالًا · يُحفظ درجة ختامية للأول الثانوي</span>
+      </p>
+    </div>
+    <div class="card">
+      <div class="goal">
+        <span class="en-only"><strong>Instructions:</strong> Answer all items. Hints on wrong answers. Best score is kept in Progress.</span>
+        <span class="ar-only"><strong>التعليمات:</strong> أجب عن الجميع. تلميح عند الخطأ. تُحفظ أفضل درجة في التقدّم.</span>
+      </div>
+      <div id="quizBoxS"></div>
+      <p id="quizScoreS" style="font-weight:800;color:#5b21b6;min-height:1.4em"></p>
+      <button type="button" id="toggleKeysS" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer;margin-top:8px">
+        <span class="en-only">Show / hide summative keys</span><span class="ar-only">إظهار / إخفاء مفتاح الختامي</span>
+      </button>
+      <div class="keys hidden-keys" id="keysBoxS" style="margin-top:12px"><h3 style="color:#fde68a"><span class="en-only">Summative key</span><span class="ar-only">مفتاح الختامي</span></h3><ol id="keysListS"></ol></div>
+    </div>
+  </section>
+  <section class="panel" id="panel-summative-2"></section>
+  <section class="panel" id="panel-summative-3"></section>
+
+</main>
+
+<footer>Sealed Nectar Academy · SNA Arabic Studio · SSS 1 Terms 1–3 · Dual language</footer>
+
+<script>
+(function(){
+  var lang = 'en', term = '1', panel = 'teacher';
+
+  function setLang(L){
+    lang = L;
+    document.body.className = L;
+    document.getElementById('btnEn').classList.toggle('on', L==='en');
+    document.getElementById('btnAr').classList.toggle('on', L==='ar');
+    document.documentElement.lang = L==='ar'?'ar':'en';
+    document.documentElement.dir = L==='ar'?'rtl':'ltr';
+    buildAllQuizzes();
+    show();
+  }
+  window.setLang = setLang;
+
+  function show(){
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); });
+    var id;
+    if(panel==='progress' || panel==='summative'){
+      id = 'panel-' + panel + '-1';
+      if(panel==='progress') renderProgress();
+    } else {
+      id = 'panel-' + panel + '-' + term;
+    }
+    var el = document.getElementById(id);
+    if(el) el.classList.add('on');
+  }
+
+  document.querySelectorAll('.bar button[data-term]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.bar button[data-term]').forEach(function(b){ b.classList.remove('on'); });
+      btn.classList.add('on');
+      term = btn.getAttribute('data-term');
+      show();
+    });
+  });
+  document.querySelectorAll('.bar button[data-panel]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.bar button[data-panel]').forEach(function(b){ b.classList.remove('on'); });
+      btn.classList.add('on');
+      panel = btn.getAttribute('data-panel');
+      show();
+    });
+  });
+
+  var Q1 = [
+    {en:'Every Arabic word is one of three types. Which set is correct?',ar:'كل كلمة عربية أحد ثلاثة. أي مجموعة صحيحة؟',opts:{en:['ism · fiʿl · ḥarf','only nouns and verbs','only particles','only verbs'],ar:['اسم · فعل · حرف','أسماء وأفعال فقط','حروف فقط','أفعال فقط']},a:0,hint:{en:'Three types: noun-like, verb, particle.',ar:'اسم وفعل وحرف.'}},
+    {en:'Which word is a fiʿl?',ar:'أي كلمة فعل؟',opts:{en:['مدرسة','كتبَ','من','قلم'],ar:['مدرسة','كتبَ','من','قلم']},a:1,hint:{en:'Verb shows action in time.',ar:'الفعل حدث مرتبط بزمان.'}},
+    {en:'Which word is a ḥarf?',ar:'أي كلمة حرف؟',opts:{en:['طالب','يكتب','في','كتاب'],ar:['طالب','يكتب','في','كتاب']},a:2,hint:{en:'في is a particle.',ar:'في حرف.'}},
+    {en:'A common sign of the ism is…',ar:'من علامات الاسم…',opts:{en:['قد only','ال and tanwīn','only future س','none'],ar:['قد فقط','أل والتنوين','سين فقط','لا شيء']},a:1,hint:{en:'ال or tanwīn on many nouns.',ar:'أل أو التنوين.'}},
+    {en:'Near masculine singular demonstrative…',ar:'إشارة المفرد المذكر القريب…',opts:{en:['هذه','هذا','ذلك','تلك'],ar:['هذه','هذا','ذلك','تلك']},a:1,hint:{en:'هذا = this (m).',ar:'هذا للقريب المذكر.'}},
+    {en:'Far feminine singular demonstrative…',ar:'إشارة المفرد المؤنث البعيد…',opts:{en:['هذه','هذا','تلك','هؤلاء'],ar:['هذه','هذا','تلك','هؤلاء']},a:2,hint:{en:'تلك = that (f far).',ar:'تلك للبعيد المؤنث.'}},
+    {en:'هؤلاء is used for…',ar:'هؤلاء لـ…',opts:{en:['one near m.','plural near','one far f.','dual far only'],ar:['مفرد مذكر قريب','جمع قريب','مفرد مؤنث بعيد','مثنى بعيد فقط']},a:1,hint:{en:'Near plural.',ar:'جمع قريب.'}},
+    {en:'Relative pronoun: الطالبةُ … نجحت؟',ar:'الموصول: الطالبةُ … نجحت؟',opts:{en:['الذي','التي','الذين','اللذان'],ar:['الذي','التي','الذين','اللذان']},a:1,hint:{en:'Feminine singular → التي',ar:'التي للمفرد المؤنث.'}},
+    {en:'Relative for masculine plural is often…',ar:'موصول جمع المذكر غالبًا…',opts:{en:['التي','الذي','الذين','تلك'],ar:['التي','الذي','الذين','تلك']},a:2,hint:{en:'الذين',ar:'الذين'}},
+    {en:'Dual in rafʿ often ends with…',ar:'المثنى رفعًا يختم بـ…',opts:{en:['ونَ','انِ','اتِ','ينَ always'],ar:['ونَ','انِ','اتِ','ينَ دائمًا']},a:1,hint:{en:'انِ',ar:'انِ'}},
+    {en:'Correct dual (rafʿ) for “two teachers”…',ar:'مثنى «معلم» رفعًا…',opts:{en:['معلمون','معلمانِ','معلمات','معلم'],ar:['معلمون','معلمانِ','معلمات','معلم']},a:1,hint:{en:'معلمانِ',ar:'معلمانِ'}},
+    {en:'Zuhair is especially linked to poetry of…',ar:'يُعرف زهير بشعر…',opts:{en:['only free verse','wisdom (ḥikmah)','sports only','computer manuals'],ar:['الشعر الحر فقط','الحكمة','الرياضة فقط','الحاسوب']},a:1,hint:{en:'Wisdom lines.',ar:'الحكمة.'}},
+    {en:'A useful word for “happy family” is…',ar:'كلمة مفيدة للأسرة السعيدة…',opts:{en:['تعاون','حرب فقط','إهمال','عزلة تامة'],ar:['تعاون','حرب فقط','إهمال','عزلة تامة']},a:0,hint:{en:'Cooperation.',ar:'تعاون.'}},
+    {en:'Classify «على»: it is…',ar:'«على» هي…',opts:{en:['ism','fiʿl','ḥarf','dual noun'],ar:['اسم','فعل','حرف','مثنى']},a:2,hint:{en:'Particle.',ar:'حرف.'}},
+    {en:'ذلك matches English…',ar:'ذلك بمعنى…',opts:{en:['this (near)','that (far)','those near only','who'],ar:['this قريب','that بعيد','these فقط','who']},a:1,hint:{en:'Far demonstrative.',ar:'للبعيد.'}}
+  ];
+
+  var Q2 = [
+    {en:'Which is a detached pronoun?',ar:'أي ضمير منفصل؟',opts:{en:['ـي in كتابي','أنا','ـنا in كتبنا only as verb ending','ـك attached only'],ar:['ـي في كتابي','أنا','ـنا المتصل فقط','ـك المتصل فقط']},a:1,hint:{en:'أنا stands alone.',ar:'أنا ضمير منفصل.'}},
+    {en:'«كتابي» contains an attached pronoun meaning…',ar:'«كتابي» الضمير المتصل يعني…',opts:{en:['your','my','his','their'],ar:['ك','ي (متكلم)','ه','هم']},a:1,hint:{en:'ـي = my.',ar:'ياء المتكلم.'}},
+    {en:'Detached pronoun for “they” (m.) is…',ar:'ضمير الغائبين المنفصل…',opts:{en:['نحن','هم','أنتم','هي'],ar:['نحن','هم','أنتم','هي']},a:1,hint:{en:'هم',ar:'هم'}},
+    {en:'«أنتنّ» refers to…',ar:'«أنتنّ» للمخاطبات…',opts:{en:['one man','a group of women addressed','one woman only','absent men'],ar:['مذكر واحد','جمع الإناث المخاطبات','مؤنث واحد فقط','غائبين']},a:1,hint:{en:'2nd person feminine plural.',ar:'جمع مؤنث مخاطب.'}},
+    {en:'Broken plural example…',ar:'مثال جمع تكسير…',opts:{en:['معلمون','طالبات','كتب (from كتاب)','معلمان'],ar:['معلمون','طالبات','كتب من كتاب','معلمان']},a:2,hint:{en:'Internal pattern change.',ar:'تغيير داخل الكلمة.'}},
+    {en:'Sound masculine plural nominative ending…',ar:'جمع المذكر السالم رفعًا…',opts:{en:['ات','ونَ','انِ only dual','تكسير only'],ar:['ات','ونَ','انِ فقط','تكسير فقط']},a:1,hint:{en:'ونَ',ar:'الواو والنون.'}},
+    {en:'Sound feminine plural of طالبة…',ar:'جمع طالبة السالم…',opts:{en:['طلاب','طالبات','طالبةون','طلب'],ar:['طلاب','طالبات','طالبةون','طلب']},a:1,hint:{en:'ات',ar:'طالبات'}},
+    {en:'In «كتبَ الطالبُ» the word الطالبُ is in…',ar:'في «كتبَ الطالبُ» كلمة الطالبُ في حالة…',opts:{en:['naṣb','jarr','rafʿ','no case'],ar:['نصب','جر','رفع','لا إعراب']},a:2,hint:{en:'Subject (fāʿil) takes rafʿ.',ar:'الفاعل مرفوع.'}},
+    {en:'After the preposition في, the noun is usually in…',ar:'بعد «في» يكون الاسم عادة في…',opts:{en:['rafʿ','naṣb','jarr','dual only'],ar:['رفع','نصب','جر','تثنية فقط']},a:2,hint:{en:'Genitive/jarr.',ar:'الجر.'}},
+    {en:'Common vowel for naṣb on a singular noun…',ar:'حركة النصب الشائعة على المفرد…',opts:{en:['ḍammah ُ','fatḥah َ','kasrah ِ','sukūn only'],ar:['ضمة','فتحة','كسرة','سكون فقط']},a:1,hint:{en:'Fatḥah.',ar:'فتحة.'}},
+    {en:'Sound masculine plural is often declined with…',ar:'جمع المذكر السالم يُعرب غالبًا بـ…',opts:{en:['only short vowels always','letters و / ي','tanwīn only','no change'],ar:['حركات فقط دائمًا','حروف و / ي','تنوين فقط','بلا تغيير']},a:1,hint:{en:'و/ي endings.',ar:'بالواو والياء.'}},
+    {en:'This term’s set poetry is linked to…',ar:'شعر الفصل المقرر مرتبط بـ…',opts:{en:['Ibn Fūdī','Zuhair only this term','Shawqī only','no poetry'],ar:['ابن فودي','زهير فقط هذا الفصل','شوقي فقط','لا شعر']},a:0,hint:{en:'ʿAbdullāh ibn Fūdī.',ar:'عبد الله بن فودي.'}},
+    {en:'A useful word for writing about the market…',ar:'كلمة مفيدة عن السوق…',opts:{en:['بائع / شراء','إعراب فقط','مثنى فقط','جزم المضارع'],ar:['بائع / شراء','إعراب فقط','مثنى فقط','جزم']},a:0,hint:{en:'Seller / buying.',ar:'بيع وشراء.'}},
+    {en:'«العطلة» as a composition theme means…',ar:'موضوع «العطلة» يعني…',opts:{en:['the holiday / vacation','only grammar case','broken plural only','relative pronoun'],ar:['وقت الراحة/الإجازة','حالة إعرابية فقط','جمع تكسير فقط','موصول']},a:0,hint:{en:'Holiday.',ar:'إجازة / عطلة.'}},
+    {en:'Attached pronoun in «ساعدَنا المعلمُ» is…',ar:'الضمير في «ساعدنا المعلم»…',opts:{en:['منفصل أنا','متصل نا','منفصل هم','لا ضمير'],ar:['منفصل أنا','متصل نا','منفصل هم','لا ضمير']},a:1,hint:{en:'نا attached object.',ar:'نا متصلة.'}}
+  ];
+
+  var Q3 = [
+    {en:'In «كتابُ الطالبِ» the word كتابُ is…',ar:'في «كتابُ الطالبِ» كلمة كتابُ هي…',opts:{en:['المضاف إليه','المضاف','حرف جر','فعل'],ar:['المضاف إليه','المضاف','حرف جر','فعل']},a:1,hint:{en:'First noun = mudāf.',ar:'المضاف هو الأول.'}},
+    {en:'In iḍāfa, المضاف إليه is usually…',ar:'المضاف إليه يكون عادة…',opts:{en:['marfūʿ only','manṣūb only','majrūr','a verb'],ar:['مرفوع فقط','منصوب فقط','مجرور','فعل']},a:2,hint:{en:'Genitive/jarr.',ar:'مجرور.'}},
+    {en:'Which is a correct iḍāfa?',ar:'أي تركيب إضافة صحيح؟',opts:{en:['كتابٌ الطالبُ','كتابُ الطالبِ','الكتابُ الطالبَ','يكتب الطالب'],ar:['كتابٌ الطالبُ','كتابُ الطالبِ','الكتابُ الطالبَ','يكتب الطالب']},a:1,hint:{en:'Mudāf without tanwīn + majrūr.',ar:'مضاف بلا تنوين + مجرور.'}},
+    {en:'A «جملة مفيدة» is a sentence that…',ar:'الجملة المفيدة هي التي…',opts:{en:['has no meaning','gives complete meaning','is only one letter','is only a particle'],ar:['بلا معنى','تفيد معنى تامًا','حرف واحد فقط','حرف فقط']},a:1,hint:{en:'Complete useful meaning.',ar:'معنى تام.'}},
+    {en:'«الطالبُ مجتهدٌ» is a…',ar:'«الطالبُ مجتهدٌ» جملة…',opts:{en:['fiʿliyyah only','ismiyyah','ḥarf only','iḍāfa only'],ar:['فعلية فقط','اسمية','حرف فقط','إضافة فقط']},a:1,hint:{en:'Starts with a noun.',ar:'تبدأ باسم.'}},
+    {en:'Verb كتبَ is…',ar:'الفعل كتبَ…',opts:{en:['mazīd with hamza','triliteral mujarrad','sound feminine plural','detached pronoun'],ar:['مزيد بالهمزة','ثلاثي مجرد','جمع مؤنث سالم','ضمير منفصل']},a:1,hint:{en:'Three root letters only.',ar:'ثلاثة أصول.'}},
+    {en:'Verb درّسَ is an example of…',ar:'درّسَ مثال على…',opts:{en:['mujarrad only','mazīd (فعّل)','relative pronoun','far demonstrative'],ar:['مجرد فقط','مزيد (فعّل)','اسم موصول','إشارة بعيدة']},a:1,hint:{en:'Extra doubling on middle radical.',ar:'تضعيف العين.'}},
+    {en:'أكرمَ follows the pattern…',ar:'أكرمَ على وزن…',opts:{en:['فعّل','فاعل','أفعل','انفعل'],ar:['فعّل','فاعل','أفعل','انفعل']},a:2,hint:{en:'Hamza prefix.',ar:'أفعل.'}},
+    {en:'دحرجَ is typically…',ar:'دحرجَ عادة…',opts:{en:['triliteral mujarrad','quadriliteral mujarrad','sound m. plural','iḍāfa particle'],ar:['ثلاثي مجرد','رباعي مجرد','جمع مذكر سالم','حرف إضافة']},a:1,hint:{en:'Four root letters.',ar:'أربعة أصول.'}},
+    {en:'Imperfect of كتبَ is…',ar:'مضارع كتبَ…',opts:{en:['اكتبْ only','يكتبُ','كاتبٌ','مكتوب only'],ar:['اكتبْ فقط','يكتبُ','كاتبٌ','مكتوب فقط']},a:1,hint:{en:'يكتبُ',ar:'يكتبُ'}},
+    {en:'Imperfect of درّسَ is often…',ar:'مضارع درّسَ غالبًا…',opts:{en:['يدرسُ (mujarrad form only)','يُدرّسُ','دَرْس only','مدرّس as verb'],ar:['يدرس المجرد فقط','يُدرّسُ','دَرْس فقط','مدرّس فعلًا']},a:1,hint:{en:'يُدرّسُ',ar:'يُدرّسُ'}},
+    {en:'A theme of قصة التعاون is…',ar:'من معاني قصة التعاون…',opts:{en:['working together / helping','avoiding all people','never sharing','iʿrāb vowels only'],ar:['العمل معًا والمساعدة','اعتزال الناس','عدم المشاركة','حركات الإعراب فقط']},a:0,hint:{en:'Cooperation.',ar:'التعاون.'}},
+    {en:'Which shows mazīd with ت + doubling?',ar:'أي فعل مزيد بالتاء والتضعيف؟',opts:{en:['كتب','تعلّم','قلم','من'],ar:['كتب','تعلّم','قلم','من']},a:1,hint:{en:'تعلّم',ar:'تعلّم'}},
+    {en:'In iḍāfa, dual mudāf loses…',ar:'في الإضافة تحذف من المثنى المضاف…',opts:{en:['the whole word','the ن of dual','all meaning','the root'],ar:['الكلمة كلها','نون المثنى','المعنى كله','الجذر']},a:1,hint:{en:'Nun of dual drops.',ar:'نون المثنى.'}},
+    {en:'قاتلَ is pattern…',ar:'قاتلَ على وزن…',opts:{en:['أفعل','فعّل','فاعل','انفعل'],ar:['أفعل','فعّل','فاعل','انفعل']},a:2,hint:{en:'فاعل',ar:'فاعل'}}
+  ];
+
+
+  function buildQuiz(boxId, scoreId, keysId, questions){
+    var box = document.getElementById(boxId);
+    if(!box) return;
+    var html = '';
+    questions.forEach(function(q, qi){
+      html += '<div class="q" data-qi="'+qi+'"><div class="stem">'+(qi+1)+'. '+(lang==='ar'?q.ar:q.en)+'</div><div class="opts">';
+      (lang==='ar'?q.opts.ar:q.opts.en).forEach(function(op, oi){
+        html += '<button type="button" data-oi="'+oi+'">'+op+'</button>';
+      });
+      html += '</div><div class="hint"></div></div>';
+    });
+    box.innerHTML = html;
+    document.getElementById(scoreId).textContent = '';
+    box.querySelectorAll('.q').forEach(function(wrap){
+      var qi = +wrap.getAttribute('data-qi');
+      var hint = wrap.querySelector('.hint');
+      wrap.querySelectorAll('button').forEach(function(btn){
+        btn.onclick = function(){
+          wrap.querySelectorAll('button').forEach(function(b){ b.classList.remove('ok','bad'); });
+          var oi = +btn.getAttribute('data-oi');
+          if(oi === questions[qi].a){
+            btn.classList.add('ok');
+            hint.className = 'hint ok';
+            hint.textContent = lang==='ar' ? '✓ إجابة صحيحة' : '✓ Correct';
+            wrap.querySelectorAll('button').forEach(function(b){ b.disabled = true; });
+          } else {
+            btn.classList.add('bad');
+            hint.className = 'hint bad';
+            hint.textContent = '✗ ' + (lang==='ar'?questions[qi].hint.ar:questions[qi].hint.en);
+          }
+          var n = 0;
+          box.querySelectorAll('.q').forEach(function(w){ if(w.querySelector('button.ok')) n++; });
+          document.getElementById(scoreId).textContent = (lang==='ar'?'النتيجة: ':'Score: ') + n + ' / ' + questions.length;
+          if(scoreId==='quizScore1') SNA_AR.recordQuiz(1, n, questions.length);
+          if(scoreId==='quizScore2') SNA_AR.recordQuiz(2, n, questions.length);
+          if(scoreId==='quizScore3') SNA_AR.recordQuiz(3, n, questions.length);
+          if(scoreId==='quizScoreS') SNA_AR.recordSummative(n, questions.length);
+        };
+      });
+    });
+    var kl = document.getElementById(keysId);
+    if(kl){
+      kl.innerHTML = questions.map(function(q,i){
+        return '<li><strong>'+(i+1)+'.</strong> '+(lang==='ar'?q.opts.ar:q.opts.en)[q.a]+'</li>';
+      }).join('');
+    }
+  }
+
+
+  var SNA_AR = {
+    classId: 'SS1',
+    storageKey: 'sna_arabic_SS1_progress_v1',
+    load: function(){
+      try { return JSON.parse(localStorage.getItem(this.storageKey) || '{}'); } catch(e){ return {}; }
+    },
+    save: function(data){
+      try { localStorage.setItem(this.storageKey, JSON.stringify(data)); } catch(e){}
+    },
+    recordQuiz: function(term, score, total){
+      var d = this.load();
+      if(!d.terms) d.terms = {};
+      var t = String(term);
+      var prev = d.terms[t] || { best: 0, attempts: 0, total: total };
+      prev.attempts = (prev.attempts || 0) + 1;
+      prev.total = total;
+      if(score > (prev.best || 0)) prev.best = score;
+      prev.last = score;
+      prev.updated = new Date().toISOString();
+      d.terms[t] = prev;
+      this.save(d);
+      renderProgress();
+    },
+    recordSummative: function(score, total){
+      var d = this.load();
+      d.summative = d.summative || { best: 0, attempts: 0, total: total };
+      d.summative.attempts += 1;
+      d.summative.total = total;
+      if(score > (d.summative.best || 0)) d.summative.best = score;
+      d.summative.last = score;
+      d.summative.updated = new Date().toISOString();
+      this.save(d);
+      renderProgress();
+    }
+  };
+
+  function renderProgress(){
+    var box = document.getElementById('progressDashboard');
+    if(!box) return;
+    var d = SNA_AR.load();
+    var terms = d.terms || {};
+    var html = '';
+    html += '<h3>'+(lang==='ar'?'ملخص الأول الثانوي':'SS1 summary')+'</h3>';
+    var done = 0;
+    for(var t=1;t<=3;t++){
+      var rec = terms[String(t)];
+      if(rec && rec.attempts) done++;
+      html += '<div class="prog-row">';
+      html += '<span class="prog-pill'+(rec&&rec.attempts?' done':'')+'">'+(lang==='ar'?'الفصل ':'Term ')+t+'</span>';
+      if(rec && rec.attempts){
+        html += '<span style="font-size:.85rem">'+(lang==='ar'?'أفضل درجة: ':'Best: ')+rec.best+'/'+rec.total+' · '+(lang==='ar'?'محاولات: ':'Attempts: ')+rec.attempts+'</span>';
+      } else {
+        html += '<span style="font-size:.85rem;color:#94a3b8">'+(lang==='ar'?'لم يُختبر بعد':'Not attempted')+'</span>';
+      }
+      html += '</div>';
+    }
+    var sum = d.summative;
+    html += '<div class="prog-row" style="margin-top:12px">';
+    html += '<span class="prog-pill'+(sum&&sum.attempts?' done':'')+'">'+(lang==='ar'?'الامتحان الختامي':'Summative exam')+'</span>';
+    if(sum && sum.attempts){
+      html += '<span style="font-size:.85rem">'+(lang==='ar'?'أفضل درجة: ':'Best: ')+sum.best+'/'+sum.total+' · '+(lang==='ar'?'محاولات: ':'Attempts: ')+sum.attempts+'</span>';
+    } else {
+      html += '<span style="font-size:.85rem;color:#94a3b8">'+(lang==='ar'?'لم يُقدَّم بعد':'Not taken yet')+'</span>';
+    }
+    html += '</div>';
+    html += '<div class="prog-row"><span style="font-size:.8rem;font-weight:700">'+(lang==='ar'?'التقويم المستمر':'Continuous assessment')+'</span>';
+    html += '<div class="prog-bar-bg"><div class="prog-bar-fill" style="width:'+Math.min(100,Math.round((done/3)*100))+'%"></div></div>';
+    html += '<span style="font-size:.8rem">'+done+'/3</span></div>';
+    box.innerHTML = html;
+  }
+
+  var QS = [
+    {en:'Word types in Arabic are…',ar:'أنواع الكلمة في العربية…',opts:{en:['ism · fiʿl · ḥarf','only verbs','only nouns','only duals'],ar:['اسم وفعل وحرف','أفعال فقط','أسماء فقط','مثنى فقط']},a:0,hint:{en:'Three types.',ar:'ثلاثة أنواع.'}},
+    {en:'«في» is…',ar:'«في»…',opts:{en:['ism','fiʿl','ḥarf','relative'],ar:['اسم','فعل','حرف','موصول']},a:2,hint:{en:'Particle.',ar:'حرف.'}},
+    {en:'Near m. singular demonstrative…',ar:'إشارة المفرد المذكر القريب…',opts:{en:['ذلك','هذا','تلك','أولئك'],ar:['ذلك','هذا','تلك','أولئك']},a:1,hint:{en:'هذا',ar:'هذا'}},
+    {en:'التي is used for…',ar:'«التي» لـ…',opts:{en:['m. plural','f. singular relative','far m. demonstrative','verb'],ar:['جمع مذكر','موصول مفرد مؤنث','إشارة مذكر بعيد','فعل']},a:1,hint:{en:'F. singular relative.',ar:'موصول مؤنث.'}},
+    {en:'Dual rafʿ marker…',ar:'علامة رفع المثنى…',opts:{en:['ون','انِ','ات','و only'],ar:['ون','انِ','ات','و فقط']},a:1,hint:{en:'انِ',ar:'انِ'}},
+    {en:'Detached pronoun «هم» means…',ar:'الضمير المنفصل «هم»…',opts:{en:['I','you f. sg.','they m.','she'],ar:['أنا','أنتِ','هم','هي']},a:2,hint:{en:'They (m).',ar:'جمع غائب مذكر.'}},
+    {en:'In «كتابي» the attached pronoun means…',ar:'في «كتابي» الضمير يعني…',opts:{en:['your','my','his','our'],ar:['ك','ي','ه','نا']},a:1,hint:{en:'My.',ar:'ياء المتكلم.'}},
+    {en:'Broken plural example…',ar:'جمع تكسير…',opts:{en:['معلمون','طالبات','كتب','معلمان'],ar:['معلمون','طالبات','كتب','معلمان']},a:2,hint:{en:'كتب from كتاب.',ar:'كتب.'}},
+    {en:'Sound m. plural rafʿ…',ar:'جمع المذكر السالم رفعًا…',opts:{en:['ينَ','ونَ','ات','انِ'],ar:['ينَ','ونَ','ات','انِ']},a:1,hint:{en:'ونَ',ar:'ونَ'}},
+    {en:'After «في» a singular noun is usually…',ar:'بعد «في» المفرد عادة…',opts:{en:['marfūʿ','manṣūb','majrūr','mazīd'],ar:['مرفوع','منصوب','مجرور','مزيد']},a:2,hint:{en:'Jarr.',ar:'مجرور.'}},
+    {en:'In «كتابُ الطالبِ» كتابُ is…',ar:'في «كتابُ الطالبِ» كتابُ…',opts:{en:['mudāf ilayh','mudāf','verb','particle'],ar:['مضاف إليه','مضاف','فعل','حرف']},a:1,hint:{en:'Mudāf.',ar:'مضاف.'}},
+    {en:'Mudāf ilayh is usually…',ar:'المضاف إليه عادة…',opts:{en:['marfūʿ','manṣūb','majrūr','imperfect'],ar:['مرفوع','منصوب','مجرور','مضارع']},a:2,hint:{en:'Majrūr.',ar:'مجرور.'}},
+    {en:'كتبَ is…',ar:'كتبَ…',opts:{en:['mazīd','triliteral mujarrad','sound f. plural','iḍāfa'],ar:['مزيد','ثلاثي مجرد','جمع مؤنث','إضافة']},a:1,hint:{en:'Three roots.',ar:'مجرد ثلاثي.'}},
+    {en:'درّسَ is pattern…',ar:'درّسَ على وزن…',opts:{en:['أفعل','فاعل','فعّل','انفعل'],ar:['أفعل','فاعل','فعّل','انفعل']},a:2,hint:{en:'فعّل',ar:'فعّل'}},
+    {en:'Imperfect of كتبَ…',ar:'مضارع كتبَ…',opts:{en:['اكتب','يكتبُ','كاتب','مكتوب'],ar:['اكتب','يكتبُ','كاتب','مكتوب']},a:1,hint:{en:'يكتبُ',ar:'يكتبُ'}},
+    {en:'أكرمَ pattern…',ar:'أكرمَ وزن…',opts:{en:['فعّل','أفعل','فاعل','تفعّل'],ar:['فعّل','أفعل','فاعل','تفعّل']},a:1,hint:{en:'أفعل',ar:'أفعل'}},
+    {en:'دحرجَ is…',ar:'دحرجَ…',opts:{en:['triliteral mujarrad','quadriliteral mujarrad','detached pronoun','relative'],ar:['ثلاثي مجرد','رباعي مجرد','ضمير منفصل','موصول']},a:1,hint:{en:'Four roots.',ar:'رباعي.'}},
+    {en:'A جملة مفيدة…',ar:'الجملة المفيدة…',opts:{en:['has incomplete meaning','has complete meaning','is only a ḥarf','cannot be nominal'],ar:['معنى ناقص','معنى تام','حرف فقط','لا تكون اسمية']},a:1,hint:{en:'Complete meaning.',ar:'معنى تام.'}},
+    {en:'Zuhair is linked to…',ar:'زهير يرتبط بـ…',opts:{en:['ḥikmah/wisdom','only modern free verse','computer science','no poetry'],ar:['الحكمة','الشعر الحر فقط','الحاسوب','لا شعر']},a:0,hint:{en:'Wisdom.',ar:'حكمة.'}},
+    {en:'Theme of التعاون…',ar:'موضوع التعاون…',opts:{en:['working together','always alone','ignoring others','only iʿrāb'],ar:['العمل معًا','العزلة دائمًا','إهمال الغير','الإعراب فقط']},a:0,hint:{en:'Cooperation.',ar:'تعاون.'}},
+    {en:'هؤلاء points to…',ar:'هؤلاء تشير إلى…',opts:{en:['far singular','near plural','one verb','mudāf only'],ar:['مفرد بعيد','جمع قريب','فعل واحد','مضاف فقط']},a:1,hint:{en:'Near plural.',ar:'جمع قريب.'}},
+    {en:'Sound f. plural of معلمة…',ar:'جمع معلمة السالم…',opts:{en:['معلمون','معلمات','معلم','معلمان'],ar:['معلمون','معلمات','معلم','معلمان']},a:1,hint:{en:'ات',ar:'معلمات'}},
+    {en:'«أنتِ» is…',ar:'«أنتِ»…',opts:{en:['1st person plural','2nd f. singular detached','3rd m. plural','attached only'],ar:['متكلم جمع','مخاطبة منفصل','غائب جمع','متصل فقط']},a:1,hint:{en:'You (f. sg.).',ar:'مخاطبة.'}},
+    {en:'In iḍāfa dual mudāf loses…',ar:'في الإضافة يُحذف من المثنى…',opts:{en:['root letters','ن of dual','all vowels forever','the second noun'],ar:['حروف الأصل','نون المثنى','كل الحركات','الاسم الثاني']},a:1,hint:{en:'Nun drops.',ar:'النون.'}},
+    {en:'Imperfect of درّسَ…',ar:'مضارع درّسَ…',opts:{en:['يدرسُ only mujarrad','يُدرّسُ','دَرْس','مدرّس verb'],ar:['يدرس المجرد فقط','يُدرّسُ','دَرْس','مدرّس']},a:1,hint:{en:'يُدرّسُ',ar:'يُدرّسُ'}}
+  ];
+
+  function buildAllQuizzes(){
+    buildQuiz('quizBox1','quizScore1','keysList1', Q1);
+    buildQuiz('quizBox2','quizScore2','keysList2', Q2);
+    buildQuiz('quizBox3','quizScore3','keysList3', Q3);
+    buildQuiz('quizBoxS','quizScoreS','keysListS', QS);
+    renderProgress();
+  }
+
+  document.getElementById('toggleKeys1').onclick = function(){ document.getElementById('keysBox1').classList.toggle('show'); };
+  document.getElementById('toggleKeys2').onclick = function(){ document.getElementById('keysBox2').classList.toggle('show'); };
+  var t3=document.getElementById('toggleKeys3'); if(t3) t3.onclick=function(){ document.getElementById('keysBox3').classList.toggle('show'); };
+
+  var tS=document.getElementById('toggleKeysS');
+  if(tS) tS.onclick=function(){ var b=document.getElementById('keysBoxS'); if(b) b.classList.toggle('show'); };
+  var exp=document.getElementById('btnExportProg');
+  if(exp) exp.onclick=function(){
+    var d=SNA_AR.load();
+    var lines=['SNA Arabic · SS1 Progress Report', 'Generated: '+new Date().toLocaleString()];
+    var terms=d.terms||{};
+    for(var t=1;t<=3;t++){
+      var r=terms[String(t)];
+      lines.push(r ? ('Term '+t+': best '+r.best+'/'+r.total+' attempts '+r.attempts) : ('Term '+t+': not attempted'));
+    }
+    var s=d.summative;
+    lines.push(s ? ('Summative: best '+s.best+'/'+s.total+' attempts '+s.attempts) : 'Summative: not taken');
+    var textOut=lines.join('\n');
+    if(navigator.clipboard) navigator.clipboard.writeText(textOut).then(function(){
+      document.getElementById('progMsg').textContent = lang==='ar'?'تم نسخ التقرير':'Report copied';
+    });
+    else { document.getElementById('progMsg').textContent = textOut; }
+  };
+  var rst=document.getElementById('btnResetProg');
+  if(rst) rst.onclick=function(){
+    if(confirm(lang==='ar'?'إعادة تعيين تقدّم الأول الثانوي؟':'Reset all SS1 progress?')){
+      localStorage.removeItem(SNA_AR.storageKey);
+      renderProgress();
+      document.getElementById('progMsg').textContent = lang==='ar'?'تم المسح':'Cleared';
+    }
+  };
+
+
+  buildAllQuizzes();
+  show();
+})();
+</script>
+</body>
+</html>
