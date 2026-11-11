@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SNA Arabic Studio · SSS 3 · معلم / طالب</title>
+<style>
+  :root {
+    --navy:#0b1c3d; --gold:#c9a227; --bg:#f8fafc; --card:#fff; --line:#e2e8f0;
+    --ink:#1e293b; --muted:#64748b; --ok:#166534; --bad:#9f1239;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI","Noto Naskh Arabic","Amiri",Tahoma,sans-serif;background:linear-gradient(180deg,#fff7ed 0%,var(--bg) 42%);color:var(--ink);line-height:1.65}
+  body.ar{direction:rtl} body.en{direction:ltr}
+  header{background:linear-gradient(135deg,#7c2d12,#c2410c);color:#fff7ed;padding:18px 16px 14px;text-align:center;border-bottom:3px solid var(--gold)}
+  header h1{margin:0 0 6px;font-size:1.2rem} header p{margin:0;font-size:.86rem;opacity:.95}
+  .bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px 12px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+  .bar button{border:1px solid var(--line);background:#f1f5f9;color:var(--navy);border-radius:999px;padding:7px 12px;font-weight:700;cursor:pointer;font-size:.8rem}
+  .bar button.on{background:linear-gradient(135deg,#c2410c,#9a3412);color:#fff;border-color:#9a3412}
+  .lang-btn.on{background:linear-gradient(135deg,#c9a227,#a16207);color:#fff;border-color:#a16207}
+  .term-btn.on{background:linear-gradient(135deg,#0f766e,#115e59);color:#fff;border-color:#115e59}
+  main{max-width:940px;margin:0 auto;padding:16px 14px 40px}
+  .panel{display:none}.panel.on{display:block}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;box-shadow:0 6px 18px rgba(15,23,42,.05)}
+  .card h2{margin:0 0 8px;font-size:1.05rem;color:var(--navy)}
+  .card h3{margin:14px 0 6px;font-size:.95rem;color:#c2410c}
+  .badge{display:inline-block;font-size:.68rem;font-weight:800;padding:3px 10px;border-radius:999px;background:#ffedd5;color:#9a3412;margin-bottom:8px}
+  .goal{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 12px;margin:8px 0 12px;font-size:.9rem;color:#78350f}
+  .example{background:#fff7ed;border-left:4px solid #ea580c;border-radius:8px;padding:10px 12px;margin:10px 0;font-size:.9rem}
+  body.ar .example{border-left:none;border-right:4px solid #ea580c}
+  table{width:100%;border-collapse:collapse;font-size:.86rem;margin:8px 0 12px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:start;vertical-align:top}
+  th{background:#ffedd5;color:var(--navy)}
+  .q{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+  .q .stem{font-weight:700;margin-bottom:8px;color:var(--navy)}
+  .opts{display:grid;gap:6px}
+  .opts button{text-align:start;padding:9px 12px;border-radius:8px;border:1px solid #cbd5e1;background:#f8fafc;cursor:pointer;font-size:.86rem}
+  body.ar .opts button{text-align:right}
+  .opts button.ok{border-color:#16a34a;background:#dcfce7}
+  .opts button.bad{border-color:#dc2626;background:#fee2e2}
+  .hint{font-size:.8rem;margin-top:6px;color:var(--muted);min-height:1.2em}
+  .hint.ok{color:var(--ok)}.hint.bad{color:var(--bad)}
+  .keys{background:#0f172a;color:#e2e8f0;border-radius:12px;padding:14px;font-size:.88rem}
+  .keys h3{color:#fde68a;margin-top:0}
+  .hidden-keys{display:none}.hidden-keys.show{display:block}
+  footer{text-align:center;font-size:.75rem;color:var(--muted);padding:8px 12px 24px}
+  .ar-only{display:none}.en-only{display:none}
+  body.ar .ar-only{display:block} body.en .en-only{display:block}
+  body.ar span.ar-only, body.en span.en-only{display:inline}
+  .progress-wrap{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+  .prog-row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;align-items:center}
+  .prog-pill{font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;background:#f1f5f9;color:#475569;border:1px solid var(--line)}
+  .prog-pill.done{background:#dcfce7;color:#166534;border-color:#86efac}
+  .prog-bar-bg{height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden;flex:1;min-width:120px}
+  .prog-bar-fill{height:100%;background:linear-gradient(90deg,#ea580c,#c2410c);width:0%}
+  .summ-banner{background:linear-gradient(135deg,#0f172a,#c2410c);color:#fff7ed;border-radius:14px;padding:14px 16px;margin-bottom:12px}
+  .summ-banner h2{margin:0 0 6px;font-size:1.05rem}.summ-banner p{margin:0;font-size:.85rem;opacity:.95}
+</style>
+</head>
+<body class="en">
+<header>
+  <div class="badge" style="background:#fde68a;color:#78350f">SNA LANGUAGE STUDIO · ARABIC · SS3</div>
+  <h1>
+    <span class="en-only">SSS 3 · Arabic Studio (Complete)</span>
+    <span class="ar-only">الثالث الثانوي · استوديو العربية (مكتمل)</span>
+  </h1>
+  <p>
+    <span class="en-only">Terms 1–2 · Teacher · Student · Evaluation · Progress · Summative</span>
+    <span class="ar-only">الفصلان ١–٢ · معلم · طالب · تقويم · تقدّم · ختامي</span>
+  </p>
+</header>
+
+<div class="bar">
+  <button type="button" class="lang-btn on" id="btnEn" onclick="setLang('en')">English</button>
+  <button type="button" class="lang-btn" id="btnAr" onclick="setLang('ar')">العربية</button>
+  <button type="button" class="term-btn on" data-term="1"><span class="en-only">1st Term</span><span class="ar-only">الفصل ١</span></button>
+  <button type="button" class="term-btn" data-term="2"><span class="en-only">2nd Term</span><span class="ar-only">الفصل ٢</span></button>
+  <button type="button" class="on" data-panel="teacher"><span class="en-only">Teacher</span><span class="ar-only">المعلم</span></button>
+  <button type="button" data-panel="student"><span class="en-only">Student</span><span class="ar-only">الطالب</span></button>
+  <button type="button" data-panel="eval"><span class="en-only">Evaluation</span><span class="ar-only">التقويم</span></button>
+  <button type="button" data-panel="keys"><span class="en-only">Keys</span><span class="ar-only">الإجابات</span></button>
+  <button type="button" data-panel="progress"><span class="en-only">Progress</span><span class="ar-only">التقدّم</span></button>
+  <button type="button" data-panel="summative" style="background:#9a3412;color:#fff;border-color:#7c2d12"><span class="en-only">Summative</span><span class="ar-only">ختامي</span></button>
+</div>
+
+<main>
+  <!-- TEACHER 1 -->
+  <section class="panel on" id="panel-teacher-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">TEACHERS · SS3 TERM 1</span><span class="ar-only">المعلمون · الثالث · ١</span></span>
+      <h2><span class="en-only">Teaching guide · First Term</span><span class="ar-only">دليل التدريس · الفصل الأول</span></h2>
+      <div class="goal">
+        <span class="en-only"><strong>Goal:</strong> Teach tamyīz; ʿaṭf and tawkīd; types of badal; revise verbs and imperative from muḍāriʿ; study set speeches and poems; themes of wedding and health.</span>
+        <span class="ar-only"><strong>الهدف:</strong> التمييز؛ العطف والتوكيد؛ أنواع البدل؛ مراجعة الأفعال والأمر من المضارع؛ الخطب والشعر؛ الزفاف وصحة الأبدان.</span>
+      </div>
+      <ol>
+        <li><span class="en-only">Tamyīz (التمييز)</span><span class="ar-only">التمييز</span></li>
+        <li><span class="en-only">Sermon of Quss ibn Sāʿida</span><span class="ar-only">خطبة قس بن ساعدة</span></li>
+        <li><span class="en-only">ʿAṭf and tawkīd</span><span class="ar-only">العطف والتوكيد</span></li>
+        <li><span class="en-only">Badal 1: whole &amp; part</span><span class="ar-only">البدل ١: كل وبعض</span></li>
+        <li><span class="en-only">Badal 2: inclusion &amp; correction</span><span class="ar-only">البدل ٢: اشتمال وغلط</span></li>
+        <li><span class="en-only">Ḥassān: Fatḥ Makkah poem (5 lines)</span><span class="ar-only">قصيدة حسان في فتح مكة</span></li>
+        <li><span class="en-only">Verb review · imperative from muḍāriʿ</span><span class="ar-only">مراجعة الأفعال · الأمر من المضارع</span></li>
+        <li><span class="en-only">Jarīr: Ashjān al-hawā (5 lines)</span><span class="ar-only">أشجان الهوى لجرير</span></li>
+        <li><span class="en-only">Jamīl ʿAbdullāh: ادفع بالتي هي أحسن</span><span class="ar-only">ادفع بالتي هي أحسن</span></li>
+        <li><span class="en-only">Wedding · body health</span><span class="ar-only">الزفاف · رعاية صحة الأبدان</span></li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">1 · Tamyīz</span><span class="ar-only">١ · التمييز</span></h2>
+      <p><span class="en-only">A noun that removes vagueness from a number, measure, or indeterminate phrase; usually indefinite manṣūb.</span>
+      <span class="ar-only">اسم يزيل الإبهام عن عدد أو مقدار أو جملة؛ غالبًا نكرة منصوبة.</span></p>
+      <div class="example">عندي عشرون كتابًا · امتلأ القلبُ سرورًا · هو أكثر منك علمًا</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">3 · ʿAṭf &amp; tawkīd</span><span class="ar-only">٣ · العطف والتوكيد</span></h2>
+      <p><span class="en-only"><strong>ʿAṭf:</strong> coordination with و، ف، ثم، أو… follower matches the followed in case.</span>
+      <span class="ar-only"><strong>العطف:</strong> بحروف العطف؛ المعطوف يتبع المعطوف عليه في الإعراب.</span></p>
+      <div class="example">جاء محمدٌ وعليٌّ · رأيتُ محمدًا فعليًّا</div>
+      <p><span class="en-only"><strong>Tawkīd:</strong> emphasis (معنوي: نفس/عين؛ لفظي: repeat the word).</span>
+      <span class="ar-only"><strong>التوكيد:</strong> معنوي (نفس، عين) ولفظي (تكرار اللفظ).</span></p>
+      <div class="example">جاء الوزيرُ نفسُه · جاء جاء الرجلُ</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">4–5 · Badal (apposition)</span><span class="ar-only">٤–٥ · البدل</span></h2>
+      <table>
+        <tr><th><span class="en-only">Type</span><span class="ar-only">النوع</span></th><th><span class="en-only">Example</span><span class="ar-only">مثال</span></th></tr>
+        <tr><td><span class="en-only">بدل كل من كل</span><span class="ar-only">مطابق</span></td><td>جاء أخوك محمدٌ</td></tr>
+        <tr><td><span class="en-only">بدل بعض من كل</span><span class="ar-only">بعض</span></td><td>أكلتُ الرغيفَ ثلثَه</td></tr>
+        <tr><td><span class="en-only">بدل اشتمال</span><span class="ar-only">اشتمال</span></td><td>أعجبني الطالبُ أدبُه</td></tr>
+        <tr><td><span class="en-only">بدل غلط</span><span class="ar-only">غلط</span></td><td>رأيتُ زيدًا الأسدَ (تصحيح)</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">7 · Imperative from muḍāriʿ</span><span class="ar-only">٧ · الأمر من المضارع</span></h2>
+      <p><span class="en-only">From 2nd person muḍāriʿ: drop letter of muḍāraʿa, apply imperative pattern (e.g. تكتبُ → اكتبْ).</span>
+      <span class="ar-only">من مضارع المخاطب: حذف حرف المضارعة وصياغة الأمر (تكتبُ → اكتبْ).</span></p>
+      <div class="example">يجلسُ → اجلسْ · تفتحُ → افتحْ · تقولُ → قلْ</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">2 · 6 · 8 · 9 · Literature</span><span class="ar-only">٢ · ٦ · ٨ · ٩ · الأدب</span></h2>
+      <p><span class="en-only">Quss: eloquent pre-Islamic oratory. Ḥassān: conquest ode. Jarīr: lyrical lines. Jamīl ʿAbdullāh: repel with that which is better — moral reading.</span>
+      <span class="ar-only">قس: الخطابة. حسان: الفتح. جرير: الغزل/الأشجان. جميل عبد الله: ادفع بالتي هي أحسن.</span></p>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">10 · Themes</span><span class="ar-only">١٠ · الموضوعات</span></h2>
+      <p><span class="en-only">Wedding importance · care of body health — guided composition vocabulary.</span>
+      <span class="ar-only">أهمية الزفاف · رعاية صحة الأبدان — تعبير موجّه.</span></p>
+    </div>
+  </section>
+
+  <!-- TEACHER 2 -->
+  <section class="panel" id="panel-teacher-2">
+    <div class="card">
+      <span class="badge"><span class="en-only">TEACHERS · SS3 TERM 2</span><span class="ar-only">المعلمون · الثالث · ٢</span></span>
+      <h2><span class="en-only">Teaching guide · Second Term</span><span class="ar-only">دليل التدريس · الفصل الثاني</span></h2>
+      <div class="goal">
+        <span class="en-only"><strong>Goal:</strong> Form the vocative (munādā); study modern poetry (Sāmī, Shawqī); write on library, agriculture, education, politics; sit summative.</span>
+        <span class="ar-only"><strong>الهدف:</strong> المنادى؛ شعر سامي وشوقي؛ المكتبة والزراعة والتعليم والسياسة؛ ثم الختامي.</span>
+      </div>
+      <ol>
+        <li><span class="en-only">Munādā (المنادى)</span><span class="ar-only">المنادى</span></li>
+        <li><span class="en-only">Maḥmūd Sāmī — poetry of fakhr</span><span class="ar-only">محمود سامي وشعر الفخر</span></li>
+        <li><span class="en-only">Aḥmad Shawqī — fox &amp; rooster (3 lines)</span><span class="ar-only">شوقي: الثعلب والديك</span></li>
+        <li><span class="en-only">Library &amp; agriculture</span><span class="ar-only">المكتبة والزراعة</span></li>
+        <li><span class="en-only">Education &amp; politics</span><span class="ar-only">التعليم والسياسة</span></li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">1 · Munādā</span><span class="ar-only">١ · المنادى</span></h2>
+      <p><span class="en-only">Called noun after يَا (and similar). School focus: mabnī on ḍamm if singular definite knowledge (يا محمدُ); manṣūb if added (يا عبدَ اللهِ).</span>
+      <span class="ar-only">الاسم بعد أداة النداء. المفرد العلم يُبنى على الضم؛ المضاف منصوب.</span></p>
+      <div class="example">يا محمدُ · يا طالبًا · يا عبدَ اللهِ · يا أيها الطلابُ</div>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">2–3 · Modern poetry</span><span class="ar-only">٢–٣ · الشعر الحديث</span></h2>
+      <p><span class="en-only"><strong>Sāmī:</strong> pride/fakhr themes. <strong>Shawqī:</strong> fable of fox and rooster — moral + language.</span>
+      <span class="ar-only"><strong>سامي:</strong> الفخر. <strong>شوقي:</strong> الثعلب والديك — العبرة واللغة.</span></p>
+    </div>
+    <div class="card">
+      <h2><span class="en-only">4–5 · Themes for writing</span><span class="ar-only">٤–٥ · موضوعات التعبير</span></h2>
+      <p><span class="en-only">Library importance · agriculture · education · politics — short structured paragraphs with topic sentence + two supports + close.</span>
+      <span class="ar-only">المكتبة · الزراعة · التعليم · السياسة — فقرة منظمة.</span></p>
+    </div>
+  </section>
+
+  <!-- STUDENT 1 -->
+  <section class="panel" id="panel-student-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">STUDENTS · SS3 T1</span><span class="ar-only">الطلاب · الثالث · ١</span></span>
+      <h2><span class="en-only">Study notes · First Term</span><span class="ar-only">مذكرات · الفصل الأول</span></h2>
+    </div>
+    <div class="card">
+      <h2>١ · التمييز</h2>
+      <div class="example">اشترى أبي خمسةَ عشرَ قلمًا · طاب زيدٌ نفسًا</div>
+    </div>
+    <div class="card">
+      <h2>٣ · العطف والتوكيد</h2>
+      <div class="example">نجح سعيدٌ وخالدٌ · حضر المديرُ نفسُه</div>
+    </div>
+    <div class="card">
+      <h2>٤–٥ · البدل</h2>
+      <div class="example">مررتُ بأخيك زيدٍ · أكلتُ الرغيفَ نصفَه · أعجبني الخطيبُ صوتُه</div>
+    </div>
+    <div class="card">
+      <h2>٧ · الأمر</h2>
+      <div class="example">تكتبُ → اكتبْ · تجلسون → اجلسوا</div>
+    </div>
+    <div class="card">
+      <h2>٢ · ٦ · ٨ · ٩ · ١٠ · النصوص والموضوعات</h2>
+      <p><span class="en-only">Memorise set lines; prepare short notes on wedding and health.</span>
+      <span class="ar-only">احفظ الأبيات؛ جهّز ملحوظات عن الزفاف وصحة الأبدان.</span></p>
+    </div>
+  </section>
+
+  <!-- STUDENT 2 -->
+  <section class="panel" id="panel-student-2">
+    <div class="card">
+      <span class="badge"><span class="en-only">STUDENTS · SS3 T2</span><span class="ar-only">الطلاب · الثالث · ٢</span></span>
+      <h2><span class="en-only">Study notes · Second Term</span><span class="ar-only">مذكرات · الفصل الثاني</span></h2>
+    </div>
+    <div class="card">
+      <h2>١ · المنادى</h2>
+      <div class="example">يا أحمدُ · يا رجلًا · يا رسولَ اللهِ</div>
+    </div>
+    <div class="card">
+      <h2>٢–٣ · سامي وشوقي</h2>
+      <p><span class="en-only">Learn set lines; state the moral of the fox and the rooster.</span>
+      <span class="ar-only">احفظ المقرر؛ اذكر عبرة الثعلب والديك.</span></p>
+    </div>
+    <div class="card">
+      <h2>٤–٥ · تعبير</h2>
+      <p><span class="en-only">Write 6–8 lines on المكتبة or التعليم using: أهمية، فائدة، تنمية، مسؤولية.</span>
+      <span class="ar-only">اكتب ٦–٨ أسطر عن المكتبة أو التعليم.</span></p>
+    </div>
+  </section>
+
+  <!-- EVAL -->
+  <section class="panel" id="panel-eval-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">EVAL · SS3 T1 · 12 Q</span><span class="ar-only">تقويم · الثالث · ١ · ١٢</span></span>
+      <div id="quizBox1"></div>
+      <p id="quizScore1" style="font-weight:800;color:#c2410c;min-height:1.4em"></p>
+    </div>
+  </section>
+  <section class="panel" id="panel-eval-2">
+    <div class="card">
+      <span class="badge"><span class="en-only">EVAL · SS3 T2 · 10 Q</span><span class="ar-only">تقويم · الثالث · ٢ · ١٠</span></span>
+      <div id="quizBox2"></div>
+      <p id="quizScore2" style="font-weight:800;color:#c2410c;min-height:1.4em"></p>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-keys-1">
+    <div class="card">
+      <button type="button" id="toggleKeys1" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer"><span class="en-only">Show / hide keys</span><span class="ar-only">إظهار / إخفاء</span></button>
+      <div class="keys hidden-keys" id="keysBox1"><ol id="keysList1"></ol></div>
+    </div>
+  </section>
+  <section class="panel" id="panel-keys-2">
+    <div class="card">
+      <button type="button" id="toggleKeys2" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer"><span class="en-only">Show / hide keys</span><span class="ar-only">إظهار / إخفاء</span></button>
+      <div class="keys hidden-keys" id="keysBox2"><ol id="keysList2"></ol></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-progress-1">
+    <div class="card">
+      <span class="badge"><span class="en-only">PROGRESS · SS3</span><span class="ar-only">التقدّم · الثالث</span></span>
+      <div class="progress-wrap" id="progressDashboard"></div>
+      <p style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" id="btnExportProg" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer"><span class="en-only">Copy report</span><span class="ar-only">نسخ التقرير</span></button>
+        <button type="button" id="btnResetProg" style="border:1px solid #fecaca;background:#fef2f2;color:#991b1b;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer"><span class="en-only">Reset SS3</span><span class="ar-only">مسح تقدّم الثالث</span></button>
+      </p>
+      <p id="progMsg" style="font-size:.85rem;color:#c2410c;min-height:1.2em"></p>
+    </div>
+  </section>
+  <section class="panel" id="panel-progress-2"></section>
+
+  <section class="panel" id="panel-summative-1">
+    <div class="summ-banner">
+      <h2><span class="en-only">SS3 Summative Examination</span><span class="ar-only">امتحان الثالث الختامي</span></h2>
+      <p><span class="en-only">Covers Terms 1–2 · 20 questions · Score saved in Progress</span>
+      <span class="ar-only">يشمل الفصلين · ٢٠ سؤالًا · الدرجة في التقدّم</span></p>
+    </div>
+    <div class="card">
+      <div id="quizBoxS"></div>
+      <p id="quizScoreS" style="font-weight:800;color:#c2410c;min-height:1.4em"></p>
+      <button type="button" id="toggleKeysS" style="border:1px solid var(--line);background:#f1f5f9;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer;margin-top:8px"><span class="en-only">Show / hide summative keys</span><span class="ar-only">مفتاح الختامي</span></button>
+      <div class="keys hidden-keys" id="keysBoxS" style="margin-top:12px"><ol id="keysListS"></ol></div>
+    </div>
+  </section>
+  <section class="panel" id="panel-summative-2"></section>
+</main>
+<footer>Sealed Nectar Academy · SNA Arabic Studio · SSS 3 Complete</footer>
+
+<script>
+(function(){
+  var lang='en', term='1', panel='teacher';
+  function setLang(L){
+    lang=L; document.body.className=L;
+    document.getElementById('btnEn').classList.toggle('on',L==='en');
+    document.getElementById('btnAr').classList.toggle('on',L==='ar');
+    document.documentElement.lang=L==='ar'?'ar':'en';
+    document.documentElement.dir=L==='ar'?'rtl':'ltr';
+    buildAll(); show();
+  }
+  window.setLang=setLang;
+  function show(){
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+    var id=(panel==='progress'||panel==='summative')?('panel-'+panel+'-1'):('panel-'+panel+'-'+term);
+    var el=document.getElementById(id); if(el) el.classList.add('on');
+    if(panel==='progress') renderProgress();
+  }
+  document.querySelectorAll('.bar button[data-term]').forEach(function(btn){
+    btn.onclick=function(){ document.querySelectorAll('.bar button[data-term]').forEach(function(b){b.classList.remove('on');}); btn.classList.add('on'); term=btn.getAttribute('data-term'); show(); };
+  });
+  document.querySelectorAll('.bar button[data-panel]').forEach(function(btn){
+    btn.onclick=function(){ document.querySelectorAll('.bar button[data-panel]').forEach(function(b){b.classList.remove('on');}); btn.classList.add('on'); panel=btn.getAttribute('data-panel'); show(); };
+  });
+
+  var SNA_AR={
+    storageKey:'sna_arabic_SS3_progress_v1',
+    load:function(){try{return JSON.parse(localStorage.getItem(this.storageKey)||'{}');}catch(e){return{};}},
+    save:function(d){try{localStorage.setItem(this.storageKey,JSON.stringify(d));}catch(e){}},
+    recordQuiz:function(t,score,total){
+      var d=this.load(); if(!d.terms)d.terms={}; var k=String(t); var p=d.terms[k]||{best:0,attempts:0,total:total};
+      p.attempts++; p.total=total; if(score>(p.best||0))p.best=score; p.last=score; d.terms[k]=p; this.save(d); renderProgress();
+    },
+    recordSummative:function(score,total){
+      var d=this.load(); d.summative=d.summative||{best:0,attempts:0,total:total};
+      d.summative.attempts++; d.summative.total=total; if(score>(d.summative.best||0))d.summative.best=score; d.summative.last=score; this.save(d); renderProgress();
+    }
+  };
+  function renderProgress(){
+    var box=document.getElementById('progressDashboard'); if(!box)return;
+    var d=SNA_AR.load(), terms=d.terms||{}, done=0, html='<h3 style="margin:0 0 8px">'+(lang==='ar'?'ملخص الثالث':'SS3 summary')+'</h3>';
+    for(var t=1;t<=2;t++){
+      var r=terms[String(t)]; if(r&&r.attempts)done++;
+      html+='<div class="prog-row"><span class="prog-pill'+(r&&r.attempts?' done':'')+'">'+(lang==='ar'?'الفصل ':'Term ')+t+'</span>';
+      html+=(r&&r.attempts)?('<span style="font-size:.85rem">'+(lang==='ar'?'أفضل: ':'Best: ')+r.best+'/'+r.total+'</span>'):('<span style="font-size:.85rem;color:#94a3b8">'+(lang==='ar'?'لم يُختبر':'Not attempted')+'</span>');
+      html+='</div>';
+    }
+    var s=d.summative;
+    html+='<div class="prog-row"><span class="prog-pill'+(s&&s.attempts?' done':'')+'">'+(lang==='ar'?'ختامي':'Summative')+'</span>';
+    html+=(s&&s.attempts)?('<span style="font-size:.85rem">'+s.best+'/'+s.total+'</span>'):('<span style="font-size:.85rem;color:#94a3b8">'+(lang==='ar'?'لم يُقدَّم':'Not taken')+'</span>');
+    html+='</div><div class="prog-row"><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:'+Math.round(done/2*100)+'%"></div></div><span>'+done+'/2</span></div>';
+    box.innerHTML=html;
+  }
+
+  var Q1=[
+    {en:'Tamyīz often appears as…',ar:'التمييز غالبًا…',opts:{en:['definite majrūr only','indefinite manṣūb','a jāzim particle','dual marker only'],ar:['معرفة مجرورة فقط','نكرة منصوبة','جازم','علامة تثنية فقط']},a:1,hint:{en:'Indefinite accusative.',ar:'نكرة منصوبة.'}},
+    {en:'عشرون كتابًا — كتابًا is…',ar:'عشرون كتابًا — كتابًا…',opts:{en:['tamyīz','ḥarf jarr','fāʿil','munādā'],ar:['تمييز','حرف جر','فاعل','منادى']},a:0,hint:{en:'Specification.',ar:'تمييز.'}},
+    {en:'و in جاء محمدٌ وعليٌّ is a particle of…',ar:'الواو في المثال حرف…',opts:{en:['jarr','ʿaṭf','jazm','nidaʾ only'],ar:['جر','عطف','جزم','نداء فقط']},a:1,hint:{en:'Coordination.',ar:'عطف.'}},
+    {en:'نفسه in حضر المديرُ نفسُه is…',ar:'نفسه توكيد…',opts:{en:['lafẓī only always','maʿnawī tawkīd','ḥarf jarr','badal ghalṭ only'],ar:['لفظي دائمًا','توكيد معنوي','حرف جر','بدل غلط فقط']},a:1,hint:{en:'Semantic emphasis.',ar:'معنوي.'}},
+    {en:'جاء أخوك محمدٌ — محمدٌ is…',ar:'محمدٌ في المثال…',opts:{en:['badal kull','ḥāl','mafʿūl muṭlaq','jawāzim'],ar:['بدل كل','حال','مفعول مطلق','جازم']},a:0,hint:{en:'Full apposition.',ar:'بدل مطابق.'}},
+    {en:'أكلتُ الرغيفَ نصفَه — نصفَه is…',ar:'نصفَه…',opts:{en:['badal baʿḍ','inna ism','preposition','sound plural'],ar:['بدل بعض','اسم إنّ','حرف جر','جمع سالم']},a:0,hint:{en:'Part of whole.',ar:'بدل بعض.'}},
+    {en:'أعجبني الطالبُ أدبُه — أدبُه is…',ar:'أدبُه…',opts:{en:['badal ishtimāl','ḥarf nahi','number 10','mithāl verb'],ar:['بدل اشتمال','لا ناهية','عدد','فعل مثال']},a:0,hint:{en:'Inclusion.',ar:'اشتمال.'}},
+    {en:'From تكتبُ the imperative is…',ar:'أمر تكتبُ…',opts:{en:['يكتبُ','اكتبْ','كاتبٌ','مكتوب'],ar:['يكتبُ','اكتبْ','كاتبٌ','مكتوب']},a:1,hint:{en:'اكتبْ',ar:'اكتبْ'}},
+    {en:'Quss ibn Sāʿida is linked to…',ar:'قس بن ساعدة يرتبط بـ…',opts:{en:['oratory/khuṭbah','only algebra','cash book','circuit'],ar:['الخطابة','الجبر فقط','دفتر صندوق','دائرة']},a:0,hint:{en:'Rhetoric.',ar:'خطابة.'}},
+    {en:'Ḥassān’s set poem theme includes…',ar:'قصيدة حسان تتعلق بـ…',opts:{en:['Fatḥ Makkah','only farming tools','browser cache','Paystack keys'],ar:['فتح مكة','أدوات الزراعة فقط','ذاكرة المتصفح','مفاتيح دفع']},a:0,hint:{en:'Conquest ode.',ar:'فتح.'}},
+    {en:'ادفع بالتي هي أحسن teaches…',ar:'ادفع بالتي هي أحسن تدعو إلى…',opts:{en:['responding with what is better','always revenge','ignoring all speech','deleting progress'],ar:['الرد بالأحسن','الثأر دائمًا','إهمال الكلام','مسح التقدّم']},a:0,hint:{en:'Better response.',ar:'الأحسن.'}},
+    {en:'Theme pair in lesson 10…',ar:'موضوعا الدرس ١٠…',opts:{en:['wedding & health','only jarr letters','only dual nun','only Paystack'],ar:['الزفاف والصحة','حروف الجر فقط','نون المثنى فقط','الدفع فقط']},a:0,hint:{en:'Social/health themes.',ar:'زفاف وصحة.'}}
+  ];
+  var Q2=[
+    {en:'Munādā often follows…',ar:'المنادى يأتي بعد…',opts:{en:['لم','يا','لن only','إنّ only'],ar:['لم','يا','لن فقط','إنّ فقط']},a:1,hint:{en:'Vocative particle.',ar:'يا.'}},
+    {en:'يا محمدُ — Muhammad is typically…',ar:'يا محمدُ — محمد…',opts:{en:['majrūr with kasra only','mabnī on ḍamm (school pattern)','always manṣūb like mudāf','a jāzim'],ar:['مجرور بالكسرة فقط','مبني على الضم','منصوب كالمضاف دائمًا','جازم']},a:1,hint:{en:'Built on ḍamm.',ar:'بناء على الضم.'}},
+    {en:'يا عبدَ اللهِ — the munādā is…',ar:'يا عبدَ اللهِ المنادى…',opts:{en:['manṣūb as mudāf','majzūm','ḥarf','number'],ar:['منصوب لأنه مضاف','مجزوم','حرف','عدد']},a:0,hint:{en:'Mudāf manṣūb.',ar:'مضاف منصوب.'}},
+    {en:'Maḥmūd Sāmī poetry focus in the scheme…',ar:'محمود سامي في المقرر…',opts:{en:['fakhr / pride','only passive verbs','only tamyīz tables','only health'],ar:['الفخر','المجهول فقط','جداول التمييز فقط','الصحة فقط']},a:0,hint:{en:'Pride poetry.',ar:'فخر.'}},
+    {en:'Shawqī’s set animal fable…',ar:'حكاية شوقي المقررة…',opts:{en:['fox and rooster','whale and cloud','only numbers','only badal'],ar:['الثعلب والديك','الحوت والسحاب','الأعداد فقط','البدل فقط']},a:0,hint:{en:'Fox & rooster.',ar:'ثعلب وديك.'}},
+    {en:'A writing topic this term…',ar:'من موضوعات التعبير…',opts:{en:['library importance','only iʿrāb of لم','only dual','only SS1'],ar:['أهمية المكتبة','إعراب لم فقط','المثنى فقط','الأول فقط']},a:0,hint:{en:'Library.',ar:'مكتبة.'}},
+    {en:'الزراعة as a composition theme means…',ar:'موضوع الزراعة…',opts:{en:['agriculture','only munādā spelling','only tawkīd','browser only'],ar:['الزراعة','تهجئة المنادى فقط','التوكيد فقط','المتصفح فقط']},a:0,hint:{en:'Farming.',ar:'زراعة.'}},
+    {en:'التعليم وأهميته is…',ar:'التعليم وأهميته…',opts:{en:['a theme for writing','a ḥarf jarr list','a passive only drill','a Paystack plan'],ar:['موضوع تعبير','قائمة حروف جر','تدريب مجهول فقط','خطة دفع']},a:0,hint:{en:'Education theme.',ar:'تعليم.'}},
+    {en:'After Term 2 continuous work, students should…',ar:'بعد تقويم الفصل ٢…',opts:{en:['take SS3 summative','delete the studio','only study SS1 demonstratives','ignore progress'],ar:['يجلسوا للختامي','يمحوا الاستوديو','يدرسوا إشارة الأول فقط','يتجاهلوا التقدّم']},a:0,hint:{en:'Summative.',ar:'ختامي.'}},
+    {en:'السياسة in the scheme is a…',ar:'السياسة في المقرر…',opts:{en:['writing/theme topic','jāzim particle','type of badal only','sound feminine plural ending'],ar:['موضوع تعبير','جازم','بدل فقط','جمع مؤنث']},a:0,hint:{en:'Theme.',ar:'موضوع.'}}
+  ];
+  var QS=[
+    {en:'Tamyīz is often…',ar:'التمييز غالبًا…',opts:{en:['manṣūb indefinite','majzūm verb','ḥarf only','munādā only'],ar:['منصوب نكرة','فعل مجزوم','حرف فقط','منادى فقط']},a:0,hint:{en:'Specification noun.',ar:'تمييز.'}},
+    {en:'و coordinates in…',ar:'الواو للعطف في…',opts:{en:['ʿaṭf','only jarr of min','only nidaʾ','only numbers'],ar:['العطف','جر من فقط','النداء فقط','الأعداد فقط']},a:0,hint:{en:'ʿAṭf.',ar:'عطف.'}},
+    {en:'نفسه as emphasis is…',ar:'نفسه للتوكيد…',opts:{en:['tawkīd maʿnawī','badal ghalṭ only','ḥāl only','kāna'],ar:['توكيد معنوي','بدل غلط فقط','حال فقط','كان']},a:0,hint:{en:'Emphasis.',ar:'توكيد.'}},
+    {en:'بدل كل example…',ar:'بدل كل…',opts:{en:['جاء أخوك محمدٌ','only لم يكتبْ','only في البيتِ','only يا'],ar:['جاء أخوك محمدٌ','لم يكتبْ فقط','في البيتِ فقط','يا فقط']},a:0,hint:{en:'Full apposition.',ar:'كل.'}},
+    {en:'بدل بعض…',ar:'بدل بعض…',opts:{en:['أكلتُ الرغيفَ نصفَه','إنّ فقط','كان فقط','لن فقط'],ar:['أكلتُ الرغيفَ نصفَه','إنّ فقط','كان فقط','لن فقط']},a:0,hint:{en:'Part.',ar:'بعض.'}},
+    {en:'اكتبْ is imperative from…',ar:'اكتبْ أمر من…',opts:{en:['تكتبُ','كتابٌ only','في only','هذا only'],ar:['تكتبُ','كتاب فقط','في فقط','هذا فقط']},a:0,hint:{en:'From muḍāriʿ.',ar:'من المضارع.'}},
+    {en:'يا سعيدُ pattern…',ar:'يا سعيدُ…',opts:{en:['munādā','tamyīz only','mafʿūl muṭlaq only','jawāzim'],ar:['منادى','تمييز فقط','مفعول مطلق فقط','جوازم']},a:0,hint:{en:'Vocative.',ar:'نداء.'}},
+    {en:'Shawqī fable animals…',ar:'حيوانا شوقي…',opts:{en:['fox & rooster','cat & USB','only sheep list','none'],ar:['الثعلب والديك','قط ويوإسبي','أغنام فقط','لا شيء']},a:0,hint:{en:'Fox/rooster.',ar:'ثعلب/ديك.'}},
+    {en:'Library theme word…',ar:'كلمة لموضوع المكتبة…',opts:{en:['قراءة / معرفة','فقط جزم','فقط بدل غلط','فقط سكون'],ar:['قراءة / معرفة','جزم فقط','بدل غلط فقط','سكون فقط']},a:0,hint:{en:'Reading/knowledge.',ar:'قراءة.'}},
+    {en:'Agriculture theme…',ar:'موضوع الزراعة…',opts:{en:['زراعة','نداء فقط','توكيد لفظي فقط','لا'],ar:['زراعة','نداء فقط','توكيد لفظي فقط','لا']},a:0,hint:{en:'Farming.',ar:'زراعة.'}},
+    {en:'Ḥassān poem linked to…',ar:'قصيدة حسان…',opts:{en:['Fatḥ Makkah','Paystack','Excel only','CSS only'],ar:['فتح مكة','الدفع','إكسل فقط','سي إس إس']},a:0,hint:{en:'Conquest.',ar:'فتح.'}},
+    {en:'ادفع بالتي هي أحسن…',ar:'ادفع بالتي هي أحسن…',opts:{en:['moral better response','only iʿrāb of dual','only SS1 ism','only reset'],ar:['الرد بالأحسن','إعراب المثنى فقط','اسم الأول فقط','إعادة التعيين فقط']},a:0,hint:{en:'Better way.',ar:'أحسن.'}},
+    {en:'Tamyīz in عشرون قلمًا is…',ar:'قلمًا في عشرون قلمًا…',opts:{en:['قلمًا','عشرون as tamyīz only wrong','في','يا'],ar:['قلمًا','عشرون تمييزًا خطأ','في','يا']},a:0,hint:{en:'قلمًا',ar:'قلمًا'}},
+    {en:'Education importance is…',ar:'أهمية التعليم…',opts:{en:['writing theme','jāzim only','badal only','ḥarf only'],ar:['موضوع تعبير','جازم فقط','بدل فقط','حرف فقط']},a:0,hint:{en:'Theme.',ar:'تعبير.'}},
+    {en:'Politics in scheme…',ar:'السياسة في المقرر…',opts:{en:['theme topic','particle of naṣb only','only tamyīz','only fox'],ar:['موضوع','ناصب فقط','تمييز فقط','ثعلب فقط']},a:0,hint:{en:'Theme.',ar:'موضوع.'}},
+    {en:'بدل اشتمال example idea…',ar:'بدل الاشتمال…',opts:{en:['أعجبني الطالبُ أدبُه','only يا محمدُ','only لم','only ثلاثة'],ar:['أعجبني الطالبُ أدبُه','يا محمدُ فقط','لم فقط','ثلاثة فقط']},a:0,hint:{en:'Inclusion.',ar:'اشتمال.'}},
+    {en:'Wedding theme…',ar:'موضوع الزفاف…',opts:{en:['الزفاف','جزم فقط','نون فقط','لا'],ar:['الزفاف','جزم فقط','نون فقط','لا']},a:0,hint:{en:'Wedding.',ar:'زفاف.'}},
+    {en:'Health of the body theme…',ar:'رعاية صحة الأبدان…',opts:{en:['health care theme','only munādā','only ʿaṭf letter و','only keys hide'],ar:['موضوع صحي','منادى فقط','واو العطف فقط','إخفاء المفاتيح']},a:0,hint:{en:'Health.',ar:'صحة.'}},
+    {en:'Sāmī poetry…',ar:'شعر سامي…',opts:{en:['fakhr','only tamyīz','only jarr','only reset'],ar:['الفخر','تمييز فقط','جر فقط','مسح فقط']},a:0,hint:{en:'Pride.',ar:'فخر.'}},
+    {en:'End of SS3 continuous work →…',ar:'نهاية تقويم الثالث →…',opts:{en:['summative exam','delete Arabic','only SS2 jarr','ignore teacher notes'],ar:['الامتحان الختامي','حذف العربية','جر الثاني فقط','تجاهل المذكرات']},a:0,hint:{en:'Summative.',ar:'ختامي.'}}
+  ];
+
+  function buildQuiz(boxId,scoreId,keysId,questions){
+    var box=document.getElementById(boxId); if(!box||!questions)return;
+    var html='';
+    questions.forEach(function(q,qi){
+      html+='<div class="q" data-qi="'+qi+'"><div class="stem">'+(qi+1)+'. '+(lang==='ar'?q.ar:q.en)+'</div><div class="opts">';
+      (lang==='ar'?q.opts.ar:q.opts.en).forEach(function(op,oi){html+='<button type="button" data-oi="'+oi+'">'+op+'</button>';});
+      html+='</div><div class="hint"></div></div>';
+    });
+    box.innerHTML=html;
+    var sc=document.getElementById(scoreId); if(sc)sc.textContent='';
+    box.querySelectorAll('.q').forEach(function(wrap){
+      var qi=+wrap.getAttribute('data-qi'); var hint=wrap.querySelector('.hint');
+      wrap.querySelectorAll('button').forEach(function(btn){
+        btn.onclick=function(){
+          wrap.querySelectorAll('button').forEach(function(b){b.classList.remove('ok','bad');});
+          var oi=+btn.getAttribute('data-oi');
+          if(oi===questions[qi].a){btn.classList.add('ok');hint.className='hint ok';hint.textContent=lang==='ar'?'✓ صحيحة':'✓ Correct';wrap.querySelectorAll('button').forEach(function(b){b.disabled=true;});}
+          else{btn.classList.add('bad');hint.className='hint bad';hint.textContent='✗ '+(lang==='ar'?questions[qi].hint.ar:questions[qi].hint.en);}
+          var n=0; box.querySelectorAll('.q').forEach(function(w){if(w.querySelector('button.ok'))n++;});
+          if(sc)sc.textContent=(lang==='ar'?'النتيجة: ':'Score: ')+n+' / '+questions.length;
+          if(scoreId==='quizScore1')SNA_AR.recordQuiz(1,n,questions.length);
+          if(scoreId==='quizScore2')SNA_AR.recordQuiz(2,n,questions.length);
+          if(scoreId==='quizScoreS')SNA_AR.recordSummative(n,questions.length);
+        };
+      });
+    });
+    var kl=document.getElementById(keysId);
+    if(kl)kl.innerHTML=questions.map(function(q,i){return '<li><strong>'+(i+1)+'.</strong> '+(lang==='ar'?q.opts.ar:q.opts.en)[q.a]+'</li>';}).join('');
+  }
+  function buildAll(){
+    buildQuiz('quizBox1','quizScore1','keysList1',Q1);
+    buildQuiz('quizBox2','quizScore2','keysList2',Q2);
+    buildQuiz('quizBoxS','quizScoreS','keysListS',QS);
+    renderProgress();
+  }
+  document.getElementById('toggleKeys1').onclick=function(){document.getElementById('keysBox1').classList.toggle('show');};
+  document.getElementById('toggleKeys2').onclick=function(){document.getElementById('keysBox2').classList.toggle('show');};
+  document.getElementById('toggleKeysS').onclick=function(){document.getElementById('keysBoxS').classList.toggle('show');};
+  document.getElementById('btnExportProg').onclick=function(){
+    var d=SNA_AR.load(),lines=['SNA Arabic · SS3 Progress',new Date().toLocaleString()];
+    for(var t=1;t<=2;t++){var r=(d.terms||{})[String(t)];lines.push(r?('Term '+t+': '+r.best+'/'+r.total):('Term '+t+': n/a'));}
+    var s=d.summative; lines.push(s?('Summative: '+s.best+'/'+s.total):'Summative: n/a');
+    var t=lines.join('\n');
+    if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){document.getElementById('progMsg').textContent=lang==='ar'?'تم النسخ':'Copied';});
+    else document.getElementById('progMsg').textContent=t;
+  };
+  document.getElementById('btnResetProg').onclick=function(){
+    if(confirm(lang==='ar'?'مسح تقدّم الثالث؟':'Reset SS3 progress?')){localStorage.removeItem(SNA_AR.storageKey);renderProgress();document.getElementById('progMsg').textContent=lang==='ar'?'تم':'Cleared';}
+  };
+  buildAll(); show();
+})();
+</script>
+</body>
+</html>
